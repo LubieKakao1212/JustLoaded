@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34408.163
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aimless.ModLoader.Content", "Aimless.ModLoader.Content\Aimless.ModLoader.Content.csproj", "{0161E80F-1682-4AAE-8138-A60A6CD7E8A2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aimless.ModLoader.Core", "Aimless.ModLoader.Core\Aimless.ModLoader.Core.csproj", "{3A004363-0795-408A-AE39-1B795FAE6C0F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0161E80F-1682-4AAE-8138-A60A6CD7E8A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0161E80F-1682-4AAE-8138-A60A6CD7E8A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0161E80F-1682-4AAE-8138-A60A6CD7E8A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0161E80F-1682-4AAE-8138-A60A6CD7E8A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A004363-0795-408A-AE39-1B795FAE6C0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A004363-0795-408A-AE39-1B795FAE6C0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A004363-0795-408A-AE39-1B795FAE6C0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A004363-0795-408A-AE39-1B795FAE6C0F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {294A1D0F-C04D-47CD-9DA3-A3A2EF6D1AD6}
+	EndGlobalSection
+EndGlobal
