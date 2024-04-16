@@ -3,25 +3,25 @@ using System.Collections;
 
 namespace Aimless.ModLoader.Content.Database
 {
-    public class ContentDatabase<T> : IContentDatabase<T> where T : notnull
+    public class ContentDatabase<TContent> : IContentDatabase<TContent> where TContent : notnull
     {
-        private readonly Dictionary<string, T> content = new();
+        private readonly Dictionary<ContentKey, TContent> content = new();
 
-        public IEnumerable<T> ContentValues => content.Values;
-        public IEnumerable<KeyValuePair<string, T>> ContentEntries => content;
-        public IEnumerable<string> ContentKeys => content.Keys;
+        public IEnumerable<TContent> ContentValues => content.Values;
+        public IEnumerable<KeyValuePair<ContentKey, TContent>> ContentEntries => content;
+        public IEnumerable<ContentKey> ContentKeys => content.Keys;
 
         public ContentDatabase()
         {
 
         }
         
-        public virtual bool AddContent(string key, T value)
+        public virtual bool AddContent(ContentKey key, TContent value)
         {
             return content.TryAdd(key, value);
         }
 
-        public virtual T? GetContent(string key)
+        public virtual TContent? GetContent(ContentKey key)
         {
             if (!content.TryGetValue(key, out var val))
             {

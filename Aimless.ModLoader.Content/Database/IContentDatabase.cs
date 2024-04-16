@@ -8,7 +8,7 @@ namespace Aimless.ModLoader.Content.Database
         /// </summary>
         /// <exception cref="UnsupportedContentTypeException">When this <see cref="IContentDatabase"/> does not support given <typeparamref name="T"/> content Type</exception>
         /// <returns>True if element was succesfully added, False if given key already exists</returns>
-        bool AddContent<TContent>(string key, TContent value) where TContent : notnull;
+        bool AddContent<TContent>(ContentKey key, TContent value) where TContent : notnull;
 
 
         /// <summary>
@@ -16,21 +16,21 @@ namespace Aimless.ModLoader.Content.Database
         /// <exception cref="UnsupportedContentTypeException">When this <see cref="IContentDatabase"/> does not support given <typeparamref name="T"/> content Type</exception>
         /// <returns>Requested Content</returns>
         [return: MaybeNull]
-        TContent GetContent<TContent>(string key) where TContent : notnull;
+        TContent GetContent<TContent>(ContentKey key) where TContent : notnull;
     }
 
     public interface IContentDatabase<TContent> : IContentDatabase where TContent : notnull
     {
         IEnumerable<TContent> ContentValues { get; }
-        IEnumerable<KeyValuePair<string, TContent>> ContentEntries { get; }
-        IEnumerable<string> ContentKeys { get; }
+        IEnumerable<KeyValuePair<ContentKey, TContent>> ContentEntries { get; }
+        IEnumerable<ContentKey> ContentKeys { get; }
 
-        TContent? GetContent(string key);
+        TContent? GetContent(ContentKey key);
 
-        bool AddContent(string key, TContent value);
+        bool AddContent(ContentKey key, TContent value);
 
         [return: MaybeNull]
-        TContent1 IContentDatabase.GetContent<TContent1>(string key)
+        TContent1 IContentDatabase.GetContent<TContent1>(ContentKey key)
         {
             if (typeof(TContent1) != typeof(TContent))
             {
@@ -46,7 +46,7 @@ namespace Aimless.ModLoader.Content.Database
             return default;
         }
         
-        bool IContentDatabase.AddContent<TContent1>(string key, TContent1 value)
+        bool IContentDatabase.AddContent<TContent1>(ContentKey key, TContent1 value)
         {
             if (typeof(TContent1) != typeof(TContent))
             {
