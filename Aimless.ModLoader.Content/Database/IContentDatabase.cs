@@ -17,6 +17,13 @@ namespace Aimless.ModLoader.Content.Database
         /// <returns>Requested Content</returns>
         [return: MaybeNull]
         TContent GetContent<TContent>(ContentKey key) where TContent : notnull;
+
+        Type[] SupportedContentTypes { get; }
+
+        bool IsTypeSuported(Type type)
+        {
+            return SupportedContentTypes.Contains(type);
+        }
     }
 
     public interface IContentDatabase<TContent> : IContentDatabase where TContent : notnull
@@ -24,6 +31,8 @@ namespace Aimless.ModLoader.Content.Database
         IEnumerable<TContent> ContentValues { get; }
         IEnumerable<KeyValuePair<ContentKey, TContent>> ContentEntries { get; }
         IEnumerable<ContentKey> ContentKeys { get; }
+
+        Type[] IContentDatabase.SupportedContentTypes => new Type[] { typeof(TContent) };
 
         TContent? GetContent(ContentKey key);
 
