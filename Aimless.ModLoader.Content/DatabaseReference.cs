@@ -1,5 +1,6 @@
 ﻿namespace Aimless.ModLoader.Content
 {
+    using Database.Extensions;
     using Database;
     
     // TODO Database refresh callback
@@ -27,12 +28,15 @@
         private TContent? value = null;
         private IContentDatabase? database = null;
 
+        private MasterDatabase? masterDatabase;
+
         /// <param name="contentKey"></param>
         /// <param name="databaseKey">When null a default database for <typeparamref name="TContent"/> will be used</param>
-        public DatabaseReference(ContentKey contentKey, ContentKey? databaseKey = null)
+        public DatabaseReference(ContentKey contentKey, ContentKey? databaseKey = null, MasterDatabase? masterDatabase = null)
         {
             this.contentKey = contentKey;
             this.databaseKey = databaseKey;
+            this.masterDatabase = masterDatabase;
         }
 
         private TContent? AssertValue()
@@ -41,13 +45,10 @@
             {
                 return value;
             }
-            else if (database != null)
+            else if (database == null)
             {
-                return value = database.GetContent<TContent>(contentKey);
-            }
-            else
-            {
-                database = MasterDatabase.GetDatabase<TContent>(databaseKey);
+                masterDatabase ??= GlobalDatabases.Master;
+                database = masterDatabase.GetDatabase<TContent>(databaseKey);
             }
 
             return value = database.GetContent<TContent>(contentKey);

@@ -1,20 +1,12 @@
-﻿
-using System.Collections;
-
-namespace Aimless.ModLoader.Content.Database
+﻿namespace Aimless.ModLoader.Content.Database
 {
     public class ContentDatabase<TContent> : IContentDatabase<TContent> where TContent : notnull
     {
-        private readonly Dictionary<ContentKey, TContent> content = new();
+        protected readonly Dictionary<ContentKey, TContent> content = new();
 
-        public IEnumerable<TContent> ContentValues => content.Values;
-        public IEnumerable<KeyValuePair<ContentKey, TContent>> ContentEntries => content;
-        public IEnumerable<ContentKey> ContentKeys => content.Keys;
-
-        public ContentDatabase()
-        {
-
-        }
+        public virtual IEnumerable<TContent> ContentValues => content.Values;
+        public virtual IEnumerable<KeyValuePair<ContentKey, TContent>> ContentEntries => content;
+        public virtual IEnumerable<ContentKey> ContentKeys => content.Keys;
         
         public virtual bool AddContent(ContentKey key, TContent value)
         {

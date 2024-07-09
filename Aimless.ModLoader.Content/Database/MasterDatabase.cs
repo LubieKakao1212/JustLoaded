@@ -1,21 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Aimless.ModLoader.Content.Database.Execeptions;
 
 namespace Aimless.ModLoader.Content.Database
 {
     /// <summary>
-    /// MasterDatabase contains all <see cref="IContentDatabase"/> instances <br/>
+    /// MasterDatabase contains <see cref="IContentDatabase"/> instances <br/>
     /// Contains a reference to itself under key "core:database"
     /// </summary>
     public class MasterDatabase : ContentDatabase<IContentDatabase>
     {
-        private static MasterDatabase? Instance = null;
-        private Dictionary<Type, ContentKey> keysByType = new();
+        private readonly Dictionary<Type, ContentKey> _keysByType = new();
 
         public MasterDatabase() {
             AddContent(new ContentKey("core", "database"), typeof(IContentDatabase), this);
@@ -23,7 +16,7 @@ namespace Aimless.ModLoader.Content.Database
 
         public ContentKey? KeyByContentType(Type type)
         {
-            if (keysByType.TryGetValue(type, out var key))
+            if (_keysByType.TryGetValue(type, out var key))
             {
                 return key;
             }
@@ -32,7 +25,7 @@ namespace Aimless.ModLoader.Content.Database
 
         public IContentDatabase? GetByContentType(Type type)
         {
-            if (!keysByType.TryGetValue(type, out var key))
+            if (!_keysByType.TryGetValue(type, out var key))
             {
                 return null;
             }
@@ -41,7 +34,7 @@ namespace Aimless.ModLoader.Content.Database
 
         public bool AddContent(ContentKey key, Type type, IContentDatabase value)
         {
-            if (keysByType.ContainsKey(type))
+            if (_keysByType.ContainsKey(type))
             {
                 return false;
             }
@@ -49,36 +42,25 @@ namespace Aimless.ModLoader.Content.Database
             {
                 return false;
             }
-            keysByType.Add(type, key);
-            return true;
-        }
-
-        public bool SetGlobal(bool force = false)
-        {
-            if (Instance != null && !force)
-            {
-                return false;
-            }
-            Instance = this;
+            _keysByType.Add(type, key);
             return true;
         }
 
         /// <summary>
-        /// Creates a new <see cref="ContentDatabase{TContent}"/> and registers it to <see cref="MasterDatabase.Instance"/>
+        /// Creates a new <see cref="ContentDatabase{TContent}"/> and registers it to this <see cref="MasterDatabase"/>"/>
         /// </summary>
         /// <param name="key">The <see cref="ContentKey"/> associated with the created database</param>
         /// <param name="registrationType"></param>
         /// <returns></returns>
-        public static IContentDatabase<TContent> CreateDatabase<TContent>(ContentKey key, DBRegistrationType registrationType = DBRegistrationType.Any) where TContent : notnull 
+        public IContentDatabase<TContent> CreateDatabase<TContent>(ContentKey key, DBRegistrationType registrationType = DBRegistrationType.Any) where TContent : notnull 
         {
             var db = new ContentDatabase<TContent>();
             RegisterDatabase(key, typeof(TContent), db, registrationType);
             return db;
         }
 
-        public static void RegisterDatabase(ContentKey key, Type? type, IContentDatabase database, DBRegistrationType registrationType = DBRegistrationType.Any)
+        public void RegisterDatabase(ContentKey key, Type? type, IContentDatabase database, DBRegistrationType registrationType = DBRegistrationType.Any)
         {
-            var master = AssertMaster();
             if (type != null)
             {
                 AssertContentType(database, type);
@@ -90,7 +72,7 @@ namespace Aimless.ModLoader.Content.Database
                 case DBRegistrationType.Any:
                     if (type != null)
                     {
-                        flag = master.AddContent(key, type, database);
+                        flag = this.AddContent(key, type, database);
                     }
                     goto case DBRegistrationType.Secondary;
                 case DBRegistrationType.Main:
@@ -98,7 +80,7 @@ namespace Aimless.ModLoader.Content.Database
                     {
                         throw new ContentRegistrationException($"Failed to register Main database [{key}] for type null");
                     }
-                    if (!master.AddContent(key, type, database))
+                    if (!this.AddContent(key, type, database))
                     {
                         throw new ContentRegistrationException($"Failed to register Main database [{key}] for type: {type}, key or type already set");
                     }
@@ -106,26 +88,26 @@ namespace Aimless.ModLoader.Content.Database
                 case DBRegistrationType.Secondary:
                     if (!flag)
                     {
-                        master.AddContent(key, database);
+                        this.AddContent(key, database);
                     }
                     break;
             }
         }
 
-        //TODO excation type
+        //TODO exception type
         /// <exception cref="ApplicationException">when no database is found</exception>
-        public static IContentDatabase GetDatabase<TContent>(ContentKey? key)
+        /// <exception cref="UnsupportedContentTypeException">when database under <paramref name="key"/> does not support <typeparamref name="TContent"/></exception>
+        public IContentDatabase GetDatabase<TContent>(ContentKey? key)
         {
-            var master = AssertMaster();
-            IContentDatabase? db = null;
             var contentType = typeof(TContent);
+            IContentDatabase? db;
             if (key != null)
             {
-                db = master.GetContent(key.Value);
+                db = this.GetContent(key.Value);
             }
             else
             {
-                db = master.GetByContentType(contentType);
+                db = this.GetByContentType(contentType);
             }
             if (db == null)
             {
@@ -135,25 +117,25 @@ namespace Aimless.ModLoader.Content.Database
             return db;
         }
 
-        //TODO excation type
+        //TODO exception type
         /// <exception cref="ApplicationException">when no database is found </exception>
-        public static IContentDatabase GetDatabase<TContent>()
+        public IContentDatabase GetDatabase<TContent>()
         {
             return GetDatabase<TContent>(null);
         }
 
-        private static MasterDatabase AssertMaster()
+        /* private static MasterDatabase AssertMaster()
         {
             if (Instance == null)
             {
                 throw new ApplicationException("No valid MasterDatabase Instance found");
             }
             return Instance;
-        }
+        }*/
 
         private static void AssertContentType(IContentDatabase db, Type contentType)
         {
-            if (!db.IsTypeSuported(contentType)) 
+            if (!db.IsTypeSupported(contentType)) 
             { 
                 throw new UnsupportedContentTypeException(contentType, db.SupportedContentTypes);
             }

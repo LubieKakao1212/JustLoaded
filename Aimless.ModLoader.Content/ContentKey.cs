@@ -13,17 +13,21 @@ namespace Aimless.ModLoader.Content
 
         public readonly string id;
 
+        public readonly int hash;
+
         public ContentKey(string source, string id)
         {
             this.source = source;
             this.id = id;
+            this.hash = ComputeHash(source, id);
         }
 
         public ContentKey(string key)
         {
             var split = key.Split(':');
-            source = split[0];
-            id = split[1];
+            this.source = split[0];
+            this.id = split[1];
+            this.hash = ComputeHash(source, id);
         }
 
         public readonly override bool Equals([NotNullWhen(true)] object? obj)
@@ -33,12 +37,12 @@ namespace Aimless.ModLoader.Content
 
         public readonly bool Equals(ContentKey other)
         {
-            return source.Equals(other.source) && id.Equals(other.id);
+            return hash == other.hash && source.Equals(other.source) && id.Equals(other.id);
         }
 
         public readonly override int GetHashCode()
         {
-            return HashCode.Combine(source.GetHashCode(), id.GetHashCode());
+            return hash;
         }
 
         public static bool operator ==(ContentKey left, ContentKey right)
@@ -54,6 +58,11 @@ namespace Aimless.ModLoader.Content
         public readonly override string ToString()
         {
             return source + ":" + id;
+        }
+
+        private static int ComputeHash(string source, string id)
+        {
+            return HashCode.Combine(source.GetHashCode(), id.GetHashCode());
         }
     }
 }

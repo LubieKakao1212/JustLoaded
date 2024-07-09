@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Aimless.ModLoader.Content.Database.Execeptions;
 
 namespace Aimless.ModLoader.Content.Database
 {
@@ -6,21 +7,20 @@ namespace Aimless.ModLoader.Content.Database
     {
         /// <summary>
         /// </summary>
-        /// <exception cref="UnsupportedContentTypeException">When this <see cref="IContentDatabase"/> does not support given <typeparamref name="T"/> content Type</exception>
-        /// <returns>True if element was succesfully added, False if given key already exists</returns>
+        /// <exception cref="UnsupportedContentTypeException">When this <see cref="IContentDatabase"/> does not support given <typeparamref name="TContent"/> content Type</exception>
+        /// <returns>True if element was successfully added, False if given key already exists</returns>
         bool AddContent<TContent>(ContentKey key, TContent value) where TContent : notnull;
 
 
         /// <summary>
         /// </summary>
-        /// <exception cref="UnsupportedContentTypeException">When this <see cref="IContentDatabase"/> does not support given <typeparamref name="T"/> content Type</exception>
+        /// <exception cref="UnsupportedContentTypeException">When this <see cref="IContentDatabase"/> does not support given <typeparamref name="TContent"/> content Type</exception>
         /// <returns>Requested Content</returns>
-        [return: MaybeNull]
-        TContent GetContent<TContent>(ContentKey key) where TContent : notnull;
+        TContent? GetContent<TContent>(ContentKey key) where TContent : notnull;
 
         Type[] SupportedContentTypes { get; }
 
-        bool IsTypeSuported(Type type)
+        bool IsTypeSupported(Type type)
         {
             return SupportedContentTypes.Contains(type);
         }
@@ -32,7 +32,7 @@ namespace Aimless.ModLoader.Content.Database
         IEnumerable<KeyValuePair<ContentKey, TContent>> ContentEntries { get; }
         IEnumerable<ContentKey> ContentKeys { get; }
 
-        Type[] IContentDatabase.SupportedContentTypes => new Type[] { typeof(TContent) };
+        Type[] IContentDatabase.SupportedContentTypes => new[] { typeof(TContent) };
 
         TContent? GetContent(ContentKey key);
 
@@ -43,7 +43,7 @@ namespace Aimless.ModLoader.Content.Database
         {
             if (typeof(TContent1) != typeof(TContent))
             {
-                throw new UnsupportedContentTypeException(typeof(TContent1), new Type[] { typeof(TContent) });
+                throw new UnsupportedContentTypeException(typeof(TContent1), new[] { typeof(TContent) });
             }
 
             var value = GetContent(key);
@@ -59,14 +59,14 @@ namespace Aimless.ModLoader.Content.Database
         {
             if (typeof(TContent1) != typeof(TContent))
             {
-                throw new UnsupportedContentTypeException(typeof(TContent1), new Type[] { typeof(TContent) });
+                throw new UnsupportedContentTypeException(typeof(TContent1), new[] { typeof(TContent) });
             }
 
             if (value is TContent valueT)
             {
                 return AddContent(key, valueT);
             }
-            throw new UnsupportedContentTypeException(typeof(TContent1), new Type[] { typeof(TContent) });
+            throw new UnsupportedContentTypeException(typeof(TContent1), new[] { typeof(TContent) });
         }
     }
 }
