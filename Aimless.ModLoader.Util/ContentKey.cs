@@ -11,23 +11,23 @@ namespace Aimless.ModLoader.Content
     {
         public readonly string source;
 
-        public readonly string id;
+        public readonly string path;
 
         public readonly int hash;
 
-        public ContentKey(string source, string id)
+        public ContentKey(string source, string path)
         {
             this.source = source;
-            this.id = id;
-            this.hash = ComputeHash(source, id);
+            this.path = path;
+            this.hash = ComputeHash(source, path);
         }
 
         public ContentKey(string key)
         {
             var split = key.Split(':');
             this.source = split[0];
-            this.id = split[1];
-            this.hash = ComputeHash(source, id);
+            this.path = split[1];
+            this.hash = ComputeHash(source, path);
         }
 
         public readonly override bool Equals([NotNullWhen(true)] object? obj)
@@ -37,7 +37,7 @@ namespace Aimless.ModLoader.Content
 
         public readonly bool Equals(ContentKey other)
         {
-            return hash == other.hash && source.Equals(other.source) && id.Equals(other.id);
+            return hash == other.hash && source.Equals(other.source) && path.Equals(other.path);
         }
 
         public readonly override int GetHashCode()
@@ -57,7 +57,7 @@ namespace Aimless.ModLoader.Content
 
         public readonly override string ToString()
         {
-            return source + ":" + id;
+            return source + ":" + path;
         }
 
         private static int ComputeHash(string source, string id)

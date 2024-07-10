@@ -3,7 +3,7 @@ using Aimless.ModLoader.Util.Extensions;
 
 namespace Aimless.ModLoader.Util.Tests;
 
-public class TopoSort
+public class TopoSortTests
 {
     [SetUp]
     public void Setup()

@@ -6,4 +6,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Aimless.ModLoader.Content\Aimless.ModLoader.Content.csproj" />
+    <ProjectReference Include="..\Aimless.ModLoader.Filesystem\Aimless.ModLoader.Filesystem.csproj" />
+    <ProjectReference Include="..\Aimless.ModLoader.Util\Aimless.ModLoader.Util.csproj" />
+  </ItemGroup>
+
 </Project>
