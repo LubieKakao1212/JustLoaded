@@ -12,4 +12,8 @@
     <ProjectReference Include="..\Aimless.ModLoader.Util\Aimless.ModLoader.Util.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Discovery\" />
+  </ItemGroup>
+
 </Project>
