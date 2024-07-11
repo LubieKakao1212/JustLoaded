@@ -67,6 +67,18 @@ public class ModMetadata {
             return this;
         }
 
+        public Builder AddRequiredDependency(Order order, string depId) {
+            requiredDependencies.Add(ToModKey(depId), order);
+            return this;
+        }
+        
+        public Builder AddOptionalDependency(Order order, string depId) {
+            optionalDependencies.Add(ToModKey(depId), order);
+            return this;
+        }
+
+
+        
         public ModMetadata Build() {
             return new ModMetadata() {
                 ModKey = ToModKey(modId),

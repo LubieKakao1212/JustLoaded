@@ -17,6 +17,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aimless.ModLoader.FileSyste
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{123CC0B4-4D0B-41BB-ACB8-ED40A52A3614}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SingleAssemblyModLoading", "Examples\SingleAssemblyModLoading\SingleAssemblyModLoading.csproj", "{4EFE980D-EFD9-4E9F-9476-EFDE03417A39}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{D45A1EBC-A616-4228-9454-AFAF00D630F9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,11 +55,18 @@ Global
 		{123CC0B4-4D0B-41BB-ACB8-ED40A52A3614}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{123CC0B4-4D0B-41BB-ACB8-ED40A52A3614}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{123CC0B4-4D0B-41BB-ACB8-ED40A52A3614}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4EFE980D-EFD9-4E9F-9476-EFDE03417A39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4EFE980D-EFD9-4E9F-9476-EFDE03417A39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4EFE980D-EFD9-4E9F-9476-EFDE03417A39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4EFE980D-EFD9-4E9F-9476-EFDE03417A39}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {294A1D0F-C04D-47CD-9DA3-A3A2EF6D1AD6}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4EFE980D-EFD9-4E9F-9476-EFDE03417A39} = {D45A1EBC-A616-4228-9454-AFAF00D630F9}
 	EndGlobalSection
 EndGlobal
