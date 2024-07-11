@@ -174,7 +174,7 @@ public class ModLoaderSystem {
         
         var resolver = new OrderedResolver<ILoadingPhase>();
         foreach (var mod in _mods.ContentValues) {
-            mod.Initializer.SystemInit(resolver);
+            mod.Initializer.SystemInit(mod, resolver);
         }
 
         _loadingPhases.Init(resolver.Resolve());

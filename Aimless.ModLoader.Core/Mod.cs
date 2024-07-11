@@ -20,28 +20,27 @@ public class Mod {
     
     public Mod(ModMetadata metadata) {
         this.Metadata = metadata;
+        this.Initializer = DefaultModInitializer.Instance;
     }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="initializer"></param>
-    public void AddInitializer(IModInitializer initializer) {
-        if (this.Initializer != null) {
+    
+    public Mod AddInitializer(IModInitializer initializer) {
+        if(this.Initializer != DefaultModInitializer.Instance) {
             //TODO Exception
             throw new Exception("A mod cannot have more than one initializer");
         }
         
         this.Initializer = initializer;
+        return this;
     }
 
-    public void AddAssembly(Assembly assembly) {
+    public Mod AddAssembly(Assembly assembly) {
         if (_assemblies.Contains(assembly)) {
             Console.Error.WriteLine("Duplicate assembly in " + Metadata.ModKey);
-            return;
+            return this;
         }
         
         _assemblies.Add(assembly);
+        return this;
     }
     
 }

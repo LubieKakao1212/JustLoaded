@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Versioning;
 using Aimless.ModLoader.Content;
@@ -36,6 +37,10 @@ public class ModMetadata {
     
     public static string ToModId(in ContentKey modKey) {
         return modKey.path;
+    }
+
+    public static Builder Create(string modId) {
+        return new Builder(modId);
     }
     
     public class Builder {
