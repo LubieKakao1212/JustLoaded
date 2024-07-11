@@ -13,13 +13,8 @@
             return content.TryAdd(key, value);
         }
 
-        public virtual TContent? GetContent(ContentKey key)
-        {
-            if (!content.TryGetValue(key, out var val))
-            {
-                return default;
-            }
-            return val;
+        public virtual TContent? GetContent(ContentKey key) {
+            return content.GetValueOrDefault(key);
         }
     }
 }

@@ -18,8 +18,8 @@ public class ModMetadata {
 
     public IEnumerable<ContentKey> ListDependencies(ModDependencyType depType, Order depOrder) {
         var deps = depType switch {
-            ModDependencyType.Hard => HardDependencies,
-            ModDependencyType.Soft => SoftDependencies,
+            ModDependencyType.Required => HardDependencies,
+            ModDependencyType.Optional => SoftDependencies,
             _ => throw new NotImplementedException()
         };
 

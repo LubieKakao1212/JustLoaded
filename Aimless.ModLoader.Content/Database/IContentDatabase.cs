@@ -3,27 +3,13 @@ using Aimless.ModLoader.Content.Database.Execeptions;
 
 namespace Aimless.ModLoader.Content.Database
 {
-    public interface IContentDatabase
+    public interface IContentDatabase : IReadOnlyContentDatabase
     {
         /// <summary>
         /// </summary>
         /// <exception cref="UnsupportedContentTypeException">When this <see cref="IContentDatabase"/> does not support given <typeparamref name="TContent"/> content Type</exception>
         /// <returns>True if element was successfully added, False if given key already exists</returns>
         bool AddContent<TContent>(ContentKey key, TContent value) where TContent : notnull;
-
-
-        /// <summary>
-        /// </summary>
-        /// <exception cref="UnsupportedContentTypeException">When this <see cref="IContentDatabase"/> does not support given <typeparamref name="TContent"/> content Type</exception>
-        /// <returns>Requested Content</returns>
-        TContent? GetContent<TContent>(ContentKey key) where TContent : notnull;
-
-        Type[] SupportedContentTypes { get; }
-
-        bool IsTypeSupported(Type type)
-        {
-            return SupportedContentTypes.Contains(type);
-        }
     }
 
     public interface IContentDatabase<TContent> : IContentDatabase where TContent : notnull
@@ -32,14 +18,14 @@ namespace Aimless.ModLoader.Content.Database
         IEnumerable<KeyValuePair<ContentKey, TContent>> ContentEntries { get; }
         IEnumerable<ContentKey> ContentKeys { get; }
 
-        Type[] IContentDatabase.SupportedContentTypes => new[] { typeof(TContent) };
+        Type[] IReadOnlyContentDatabase.SupportedContentTypes => new[] { typeof(TContent) };
 
         TContent? GetContent(ContentKey key);
 
         bool AddContent(ContentKey key, TContent value);
 
         [return: MaybeNull]
-        TContent1 IContentDatabase.GetContent<TContent1>(ContentKey key)
+        TContent1 IReadOnlyContentDatabase.GetContent<TContent1>(ContentKey key)
         {
             if (typeof(TContent1) != typeof(TContent))
             {

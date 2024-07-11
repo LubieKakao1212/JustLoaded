@@ -1,7 +1,7 @@
 namespace Aimless.ModLoader.Core.Loading;
 
-public interface ILoadingPhase<in TModLoaderSystem> where TModLoaderSystem : IModLoaderSystem {
+public interface ILoadingPhase {
 
-    public void Load(TModLoaderSystem modLoader);
+    public void Load(ModLoaderSystem modLoader);
 
 }

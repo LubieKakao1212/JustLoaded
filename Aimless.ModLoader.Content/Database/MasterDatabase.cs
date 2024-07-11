@@ -6,14 +6,14 @@ namespace Aimless.ModLoader.Content.Database
     /// MasterDatabase contains <see cref="IContentDatabase"/> instances <br/>
     /// Contains a reference to itself under key "core:database"
     /// </summary>
-    public class MasterDatabase : ContentDatabase<IContentDatabase>
+    public class MasterDatabase : ContentDatabase<IContentDatabase>, IReadOnlyMasterDatabase
     {
         private readonly Dictionary<Type, ContentKey> _keysByType = new();
 
         public MasterDatabase() {
             AddContent(new ContentKey("core", "database"), typeof(IContentDatabase), this);
         }
-
+        
         public ContentKey? KeyByContentType(Type type)
         {
             if (_keysByType.TryGetValue(type, out var key))
@@ -59,6 +59,14 @@ namespace Aimless.ModLoader.Content.Database
             return db;
         }
 
+        public void RegisterDatabase<TContent>(ContentKey key, ContentDatabase<TContent> database, DBRegistrationType registrationType = DBRegistrationType.Any) where TContent : notnull {
+            RegisterDatabase(key, typeof(TContent), database, registrationType);
+        }
+        
+        public void RegisterDatabase<TContent>(ContentKey key, IContentDatabase database, DBRegistrationType registrationType = DBRegistrationType.Any) {
+            RegisterDatabase(key, typeof(TContent), database, registrationType);
+        }
+        
         public void RegisterDatabase(ContentKey key, Type? type, IContentDatabase database, DBRegistrationType registrationType = DBRegistrationType.Any)
         {
             if (type != null)
@@ -93,7 +101,7 @@ namespace Aimless.ModLoader.Content.Database
                     break;
             }
         }
-
+        
         //TODO exception type
         /// <exception cref="ApplicationException">when no database is found</exception>
         /// <exception cref="UnsupportedContentTypeException">when database under <paramref name="key"/> does not support <typeparamref name="TContent"/></exception>
@@ -123,15 +131,6 @@ namespace Aimless.ModLoader.Content.Database
         {
             return GetDatabase<TContent>(null);
         }
-
-        /* private static MasterDatabase AssertMaster()
-        {
-            if (Instance == null)
-            {
-                throw new ApplicationException("No valid MasterDatabase Instance found");
-            }
-            return Instance;
-        }*/
 
         private static void AssertContentType(IContentDatabase db, Type contentType)
         {
