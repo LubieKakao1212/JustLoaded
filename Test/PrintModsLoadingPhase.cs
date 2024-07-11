@@ -6,7 +6,7 @@ using Aimless.ModLoader.Core.Loading;
 namespace Test;
 
 public class PrintModsLoadingPhase : ILoadingPhase {
-    
+
     public void Load(ModLoaderSystem modLoader) {
         var mods = (ContentDatabase<Mod>?)modLoader.MasterDb.GetContent(new ContentKey("core:mods"));
 
@@ -16,8 +16,7 @@ public class PrintModsLoadingPhase : ILoadingPhase {
         }
         
         foreach (var modKey in mods.ContentKeys) {
-            Console.WriteLine(modKey.path);
+            Console.WriteLine(modKey);
         }
     }
-    
 }

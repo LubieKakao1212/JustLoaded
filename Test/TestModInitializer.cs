@@ -1,15 +1,17 @@
 using Aimless.ModLoader.Content;
 using Aimless.ModLoader.Core;
 using Aimless.ModLoader.Core.Loading;
+using Aimless.ModLoader.Util;
 
 namespace Test;
 
 public class TestModInitializer : IModInitializer {
     
+    public static readonly ContentKey Key = new ContentKey("coremod", "print");
+    
     public void SystemInit(Mod thisMod, OrderedResolver<ILoadingPhase> phases) {
-        phases.BeginRegister(
-            new ContentKey(thisMod.Metadata.ModKey.path, "print"), new PrintModsLoadingPhase()
-            ).Register();
+        phases.BeginRegister(Key, new PrintModsLoadingPhase())
+            .Register();
     }
     
 }

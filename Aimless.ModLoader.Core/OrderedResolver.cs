@@ -45,7 +45,7 @@ public class OrderedResolver<TContent> where TContent : notnull {
     
     private void Add(ContentKey key, TContent value) {
         _elements.Add(key, value);
-        _deps.Add(key, new HashSet<ContentKey>());
+        _deps.GetValueOrSetDefaultLazy(key, () => new HashSet<ContentKey>());
     }
 
     private void AddDependency(ContentKey from, ContentKey to) {

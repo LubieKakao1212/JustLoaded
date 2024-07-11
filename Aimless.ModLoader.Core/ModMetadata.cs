@@ -46,23 +46,23 @@ public class ModMetadata {
     public class Builder {
 
         protected readonly string modId;
-        protected readonly Dictionary<ContentKey, Order> hardDependencies = new();
-        protected readonly Dictionary<ContentKey, Order> softDependencies = new();
+        protected readonly Dictionary<ContentKey, Order> requiredDependencies = new();
+        protected readonly Dictionary<ContentKey, Order> optionalDependencies = new();
         
         public Builder(string modId) {
             this.modId = modId;
         }
 
-        public Builder AddHardDependencies(Order order, params string[] deps) {
+        public Builder AddRequiredDependencies(Order order, params string[] deps) {
             foreach (var depId in deps) {
-                hardDependencies.Add(ToModKey(depId), order);
+                requiredDependencies.Add(ToModKey(depId), order);
             }
             return this;
         }
         
-        public Builder AddSoftDependencies(Order order, params string[] deps) {
+        public Builder AddOptionalDependencies(Order order, params string[] deps) {
             foreach (var depId in deps) {
-                softDependencies.Add(ToModKey(depId), order);
+                optionalDependencies.Add(ToModKey(depId), order);
             }
             return this;
         }
@@ -70,8 +70,8 @@ public class ModMetadata {
         public ModMetadata Build() {
             return new ModMetadata() {
                 ModKey = ToModKey(modId),
-                HardDependencies = hardDependencies,
-                SoftDependencies = softDependencies
+                HardDependencies = requiredDependencies,
+                SoftDependencies = optionalDependencies
             };
         }
     }
