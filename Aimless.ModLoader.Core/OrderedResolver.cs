@@ -36,6 +36,9 @@ public class OrderedResolver<TContent> where TContent : notnull {
             }
 
             foreach (var dep in source.Value) {
+                if (!_elements.ContainsKey(dep)) {
+                    continue;
+                }
                 sorter.AddDependency(source.Key, dep);
             }
         }
