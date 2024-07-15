@@ -16,6 +16,7 @@ public abstract class EntrypointLoadingPhase<TEntrypoint> : ILoadingPhase {
             return;
         }
         
+        Setup(modLoader);
         foreach (var modEntry in mods.ContentEntries) {
             var mod = modEntry.Value;
             bool foundEntrypoint = false;
@@ -34,6 +35,8 @@ public abstract class EntrypointLoadingPhase<TEntrypoint> : ILoadingPhase {
         }
         Finish(modLoader);
     }
+    
+    protected virtual void Setup(ModLoaderSystem modLoader) { }
 
     protected abstract void HandleEntrypointFor(Mod mod, TEntrypoint entrypoint, ModLoaderSystem modLoader);
 

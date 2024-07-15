@@ -1,4 +1,5 @@
 using System.Reflection;
+using JustLoaded.Core.Entrypoint;
 
 namespace JustLoaded.Core;
 

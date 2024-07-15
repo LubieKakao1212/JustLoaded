@@ -1,10 +1,9 @@
-using System.Drawing;
-using JustLoaded.Util.Extensions;
 using JustLoaded.Content;
 using JustLoaded.Util;
 using JustLoaded.Util.Algorithm;
+using JustLoaded.Util.Extensions;
 
-namespace JustLoaded.Core.Loading;
+namespace JustLoaded.Core;
 
 public class OrderedResolver<TContent> where TContent : notnull {
 

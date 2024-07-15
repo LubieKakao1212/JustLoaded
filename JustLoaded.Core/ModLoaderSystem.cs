@@ -2,6 +2,7 @@ using JustLoaded.Util.Extensions;
 using JustLoaded.Content;
 using JustLoaded.Content.Database;
 using JustLoaded.Core.Discovery;
+using JustLoaded.Core.Entrypoint;
 using JustLoaded.Core.Loading;
 using JustLoaded.Util;
 using JustLoaded.Util.Algorithm;

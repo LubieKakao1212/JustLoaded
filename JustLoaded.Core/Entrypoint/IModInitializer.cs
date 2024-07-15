@@ -1,7 +1,6 @@
-using JustLoaded.Util.Algorithm;
 using JustLoaded.Core.Loading;
 
-namespace JustLoaded.Core;
+namespace JustLoaded.Core.Entrypoint;
 
 public interface IModInitializer {
 

@@ -1,3 +1,4 @@
+using JustLoaded.Core.Entrypoint;
 using JustLoaded.Util.Algorithm;
 using JustLoaded.Core.Loading;
 
