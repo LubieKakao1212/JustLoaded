@@ -10,8 +10,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ddd7ae70-ff39-4df4-9b09-0e14babedcf7" name="Changes" comment="More workflow fixes">
-      <change beforePath="$PROJECT_DIR$/.github/workflows/dotnet-test.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/dotnet-test.yaml" afterDir="false" />
+    <list default="true" id="ddd7ae70-ff39-4df4-9b09-0e14babedcf7" name="Changes" comment="fix again">
+      <change beforePath="$PROJECT_DIR$/.github/workflows/dotnet-build.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/dotnet-build.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Aimless.ModLoader/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Aimless.ModLoader/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -236,7 +236,7 @@
       <workItem from="1720859250982" duration="13382000" />
       <workItem from="1720975600770" duration="7890000" />
       <workItem from="1721037723715" duration="261000" />
-      <workItem from="1721037993427" duration="7191000" />
+      <workItem from="1721037993427" duration="8038000" />
     </task>
     <task id="LOCAL-00001" summary="Added Util module + Implemented TopoSorter and its tests + Implemented ArrayDatabase">
       <option name="closed" value="true" />
@@ -342,7 +342,23 @@
       <option name="project" value="LOCAL" />
       <updated>1721051485420</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="workflow fix?">
+      <option name="closed" value="true" />
+      <created>1721051912079</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1721051912079</updated>
+    </task>
+    <task id="LOCAL-00015" summary="fix again">
+      <option name="closed" value="true" />
+      <created>1721051967669</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1721051967669</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -376,7 +392,9 @@
     <MESSAGE value="Added github workflows" />
     <MESSAGE value="Workflow fixes + Enabled more frameworks" />
     <MESSAGE value="More workflow fixes" />
-    <option name="LAST_COMMIT_MESSAGE" value="More workflow fixes" />
+    <MESSAGE value="workflow fix?" />
+    <MESSAGE value="fix again" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix again" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

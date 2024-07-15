@@ -4,6 +4,10 @@ on:
   release: 
     types: [ created ]
   workflow_dispatch:
+    inputs: 
+      dotnet_version:
+        description: ".NET Version"
+        default: "8.0.x"
 #  push:
 #    branches: [master]
 
@@ -15,16 +19,17 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu, windows, macos]
-        dotnet-version: [6.0.x, 7.0.x, 8.0.x]
-    runs-on: ${{ matrix.os }}-latest
+    env:
+      dotnet-version: ${{ inputs.dotnet_version || '8.0.x' }}
     
+    runs-on: ${{ matrix.os }}-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup dotnet ${{ matrix.dotnet-version }}
+      - name: Setup dotnet ${{ env.dotnet-version }}
         uses: actions/setup-dotnet@v3
         id: setup-dotnet
         with:
-          dotnet-version: ${{ matrix.dotnet-version }}
+          dotnet-version: ${{ env.dotnet-version }}
       - name: Create temporary global.json
         run: |
           echo '{"sdk":{"version": "${{ steps.setup-dotnet.outputs.dotnet-version }}"}}' > ./global.json
@@ -41,7 +46,7 @@ jobs:
           - JustLoaded.Filesystem
           - JustLoaded.Util
     env:
-      dotnet-version: 6.0.x
+      dotnet-version: ${{ inputs.dotnet_version || '8.0.x' }}
     runs-on: ubuntu-latest
     needs: Build-And-Test
     
@@ -75,7 +80,7 @@ jobs:
           - JustLoaded.Filesystem
           - JustLoaded.Util
     env:
-      dotnet-version: 6.0.x
+      dotnet-version:${{ inputs.dotnet_version || '8.0.x' }}
     runs-on: ubuntu-latest
     needs: Pack
 
