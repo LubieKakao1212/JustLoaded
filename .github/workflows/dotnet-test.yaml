@@ -1,0 +1,32 @@
+name: Run .NET Tests
+run-name: Run .NET Tests
+on:
+  pull_request:
+    branches: [master]
+    types: [edited, opened, reopened]
+  workflow_dispatch:
+  push:
+    branches: [master]
+
+jobs:
+  Build-And-Test:
+    strategy:
+      matrix:
+        os: [ubuntu, windows, macos]
+        dotnet-version: [6.0.x, 7.0.x, 8.0.x]
+    runs-on: ${{ matrix.os }}-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup dotnet ${{ matrix.dotnet-version }}
+        uses: actions/setup-dotnet@v3
+        id: setup-dotnet
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
+      - name: Create temporary global.json
+        run: |
+          echo '{"sdk":{"version": "${{ steps.setup-dotnet.outputs.dotnet-version }}"}}' > ./global.json
+      - name: Display dotnet version
+        run: dotnet --version
+      - name: Run Tests
+        run: dotnet test

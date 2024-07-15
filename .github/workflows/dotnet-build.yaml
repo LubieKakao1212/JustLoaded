@@ -1,0 +1,91 @@
+name: Run .NET Build
+run-name: Run .NET Build
+on:
+  release: 
+    types: [ created ]
+  workflow_dispatch:
+#  push:
+#    branches: [master]
+
+permissions:
+  packages: write
+
+jobs:
+  Build-And-Test:
+    strategy:
+      matrix:
+        os: [ubuntu, windows, macos]
+        dotnet-version: [6.0.x, 7.0.x, 8.0.x]
+    runs-on: ${{ matrix.os }}-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup dotnet ${{ matrix.dotnet-version }}
+        uses: actions/setup-dotnet@v3
+        id: setup-dotnet
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
+      - name: Create temporary global.json
+        run: |
+          echo '{"sdk":{"version": "${{ steps.setup-dotnet.outputs.dotnet-version }}"}}' > ./global.json
+      - name: Display dotnet version
+        run: dotnet --version
+      - name: Run Tests
+        run: dotnet test
+  Pack:
+    strategy:
+      matrix:
+        project: [JustLoaded.Content, ]
+    env:
+      dotnet-version: 7.0.x
+    runs-on: ubuntu-latest
+    needs: Build-And-Test
+    
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup dotnet ${{ env.dotnet-version }}
+        uses: actions/setup-dotnet@v3
+        id: setup-dotnet
+        with:
+          dotnet-version: ${{ env.dotnet-version }}
+      - name: Create temporary global.json
+        run: |
+          echo '{"sdk":{"version": "${{ steps.setup-dotnet.outputs.dotnet-version }}"}}' > ./global.json
+      - run: ls
+      - name: Pack
+        run: dotnet pack ${{ matrix.project }} -c Release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nuget-${{ matrix.project }}
+          path: ${{ matrix.project }}/bin/Release/
+          if-no-files-found: error
+          retention-days: 0
+  Publish:
+    permissions:
+      packages: write
+    strategy:
+      matrix:
+        project: [test-project]
+    env:
+      dotnet-version: 7.0.x
+    runs-on: ubuntu-latest
+    needs: Pack
+
+    steps:
+      - name: Download nuget package artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: nuget-${{ matrix.project }}
+      - name: Setup dotnet ${{ env.dotnet-version }}
+        uses: actions/setup-dotnet@v3
+        id: setup-dotnet
+        with:
+          dotnet-version: ${{ env.dotnet-version }}
+      - name: Create temporary global.json
+        run: |
+          echo '{"sdk":{"version": "${{ steps.setup-dotnet.outputs.dotnet-version }}"}}' > ./global.json
+      - name: Auth to Github Packages
+        run: dotnet nuget add source --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/LubieKakao1212/index.json"
+      - name: Push Package
+        run: dotnet nuget push ${{ matrix.project }}.*.nupkg --source "github"
+    
