@@ -21,6 +21,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SingleAssemblyModLoading", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{D45A1EBC-A616-4228-9454-AFAF00D630F9}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MultiAssembly", "MultiAssembly", "{0CC3B3EC-AC4F-4A8A-B410-1A16B9387619}"
+	ProjectSection(SolutionItems) = preProject
+		Examples\MultiAssembly\Directory.Build.props = Examples\MultiAssembly\Directory.Build.props
+		Examples\MultiAssembly\Directory.Build.targets = Examples\MultiAssembly\Directory.Build.targets
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiAssembly.Game", "Examples\MultiAssembly\MultiAssembly.Game\MultiAssembly.Game.csproj", "{EE855A2C-0E2A-4F35-A90C-F4CC3E18B780}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiAssembly.FunMod", "Examples\MultiAssembly\MultiAssembly.FunMod\MultiAssembly.FunMod.csproj", "{3A362D93-393F-4A3F-9BB4-BA38576BCEF5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +69,14 @@ Global
 		{4EFE980D-EFD9-4E9F-9476-EFDE03417A39}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4EFE980D-EFD9-4E9F-9476-EFDE03417A39}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4EFE980D-EFD9-4E9F-9476-EFDE03417A39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE855A2C-0E2A-4F35-A90C-F4CC3E18B780}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE855A2C-0E2A-4F35-A90C-F4CC3E18B780}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE855A2C-0E2A-4F35-A90C-F4CC3E18B780}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE855A2C-0E2A-4F35-A90C-F4CC3E18B780}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A362D93-393F-4A3F-9BB4-BA38576BCEF5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A362D93-393F-4A3F-9BB4-BA38576BCEF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A362D93-393F-4A3F-9BB4-BA38576BCEF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A362D93-393F-4A3F-9BB4-BA38576BCEF5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -68,5 +86,8 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{4EFE980D-EFD9-4E9F-9476-EFDE03417A39} = {D45A1EBC-A616-4228-9454-AFAF00D630F9}
+		{0CC3B3EC-AC4F-4A8A-B410-1A16B9387619} = {D45A1EBC-A616-4228-9454-AFAF00D630F9}
+		{EE855A2C-0E2A-4F35-A90C-F4CC3E18B780} = {0CC3B3EC-AC4F-4A8A-B410-1A16B9387619}
+		{3A362D93-393F-4A3F-9BB4-BA38576BCEF5} = {0CC3B3EC-AC4F-4A8A-B410-1A16B9387619}
 	EndGlobalSection
 EndGlobal

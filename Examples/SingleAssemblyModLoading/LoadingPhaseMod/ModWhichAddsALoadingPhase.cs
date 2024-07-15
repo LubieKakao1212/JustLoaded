@@ -15,7 +15,7 @@ public class ModWhichAddsALoadingPhase {
 public class ModWhichAddsALoadingPhaseInitializer : IModInitializer {
     
     public void SystemInit(Mod thisMod, OrderedResolver<ILoadingPhase> phases) {
-        phases.BeginRegister(new ContentKey(ModWhichAddsALoadingPhase.ModId, "print-mods"), new ListModsPhase())
+        phases.New(new ContentKey(ModWhichAddsALoadingPhase.ModId, "print-mods"), new ListModsLoadingPhase())
             .Register();
     }
     

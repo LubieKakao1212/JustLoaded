@@ -10,7 +10,7 @@ public class TestModInitializer : IModInitializer {
     public static readonly ContentKey Key = new ContentKey("coremod", "print");
     
     public void SystemInit(Mod thisMod, OrderedResolver<ILoadingPhase> phases) {
-        phases.BeginRegister(Key, new PrintModsLoadingPhase())
+        phases.New(Key, new PrintModsLoadingPhase())
             .Register();
     }
     

@@ -1,0 +1,7 @@
+<Project>
+    <PropertyGroup>
+        <MSBuildEnableWorkloadResolver>false</MSBuildEnableWorkloadResolver>
+        <GameProject>MultiAssembly.Game</GameProject>
+        <ProjectsCommonRoot>..</ProjectsCommonRoot>
+    </PropertyGroup>
+</Project>

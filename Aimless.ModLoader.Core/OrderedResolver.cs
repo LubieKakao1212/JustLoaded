@@ -15,7 +15,7 @@ public class OrderedResolver<TContent> where TContent : notnull {
     /// Remember to call <see cref="Registration.Register"/> on the returned registration
     /// </summary>
     /// <returns>A new <see cref="Registration"/> object</returns>
-    public Registration BeginRegister(ContentKey key, TContent value) {
+    public Registration New(ContentKey key, TContent value) {
         if (_elements.ContainsKey(key)) {
             //TODO exception
             throw new Exception($"Duplicate id {key}");

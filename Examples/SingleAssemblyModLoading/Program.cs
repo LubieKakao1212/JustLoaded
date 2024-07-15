@@ -7,9 +7,14 @@ Console.WriteLine("Hello, World!");
 
 var ml = new ModLoaderSystem.Builder(new AssemblyModProvider(new LoadedAssemblyProvider())).Build();
 
-ml.DiscoverMods();
-ml.ResolveDependencies();
-ml.InitMods();
-ml.Load();
+try {
+    ml.DiscoverMods();
+    ml.ResolveDependencies();
+    ml.InitMods();
+    ml.Load();
+}
+catch (Exception e) {
+    Console.WriteLine(e);
+}
 
 Console.WriteLine(ml.CurrentInitPhase);

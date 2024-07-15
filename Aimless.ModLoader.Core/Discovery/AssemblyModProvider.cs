@@ -5,7 +5,7 @@ namespace Aimless.ModLoader.Core.Discovery;
 
 public class AssemblyModProvider : IModProvider {
 
-    private IAssemblyProvider _assemblyProvider;
+    private readonly IAssemblyProvider _assemblyProvider;
     
     public AssemblyModProvider(IAssemblyProvider assemblyProvider) {
         this._assemblyProvider = assemblyProvider;

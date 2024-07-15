@@ -1,0 +1,15 @@
+<Project>
+    <PropertyGroup>
+        <CopyTargetPath>bin/$(Configuration)/$(TargetFramework)/mods</CopyTargetPath>
+    </PropertyGroup>
+    
+    <Target Name="Debug2Test" AfterTargets="Build" Condition="'$(ProjectName)' != '$(GameProject)'">
+        <ItemGroup>
+            <CopySourceFiles Include="$(OutputPath)**/$(ProjectName).*" />
+        </ItemGroup>
+        
+        <Message Importance="high" Text="$(CopyTargetPath)"/>
+        <Message Importance="high" Text="$(ProjectsCommonRoot)/$(GameProject)/$(CopyTargetPath)/"/>
+        <Copy SourceFiles="@(CopySourceFiles)" DestinationFiles="@(CopySourceFiles-&gt; '$(ProjectsCommonRoot)/$(GameProject)/$(CopyTargetPath)/%(RecursiveDir)%(Filename)%(Extension)')"/>
+    </Target>
+</Project>

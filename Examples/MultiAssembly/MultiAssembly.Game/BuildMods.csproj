@@ -1,0 +1,6 @@
+<Project InitialTargets="BuildMods" Sdk="Microsoft.NET.Sdk">
+    <Target Name="BuildMods">
+        <Message Importance="high" Text="building mods" />
+        <Exec Command="MSBuild.exe ../MultiAssembly.FunMod/MultiAssembly.FunMod.csproj -t:build"/>
+    </Target>
+</Project>

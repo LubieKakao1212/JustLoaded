@@ -1,4 +1,3 @@
-using System.ComponentModel.Design.Serialization;
 using Aimless.ModLoader.Content;
 
 namespace Aimless.ModLoader.Filesystem;
@@ -15,7 +14,7 @@ public class PhysicalFilesystem : IFilesystem {
     
     Stream? IFilesystem.OpenFile(string path) {
         try {
-            return File.OpenRead(ApplyPath(Root));
+            return File.OpenRead(ApplyPath(path));
         }
         catch (DirectoryNotFoundException e) {
             //TODO use Logger

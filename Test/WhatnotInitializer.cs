@@ -8,7 +8,7 @@ namespace Test;
 public class WhatnotInitializer : IModInitializer {
     
     public void SystemInit(Mod thisMod, OrderedResolver<ILoadingPhase> phases) {
-        phases.BeginRegister(new ContentKey("whatnot", "whatnot"), new WhatnotPhase())
+        phases.New(new ContentKey("whatnot", "whatnot"), new WhatnotPhase())
             .WithOrder(TestModInitializer.Key, Order.After)
             .Register();
     }

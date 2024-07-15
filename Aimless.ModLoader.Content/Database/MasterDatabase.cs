@@ -6,7 +6,7 @@ namespace Aimless.ModLoader.Content.Database
     /// MasterDatabase contains <see cref="IContentDatabase"/> instances <br/>
     /// Contains a reference to itself under key "core:database"
     /// </summary>
-    public class MasterDatabase : ContentDatabase<IContentDatabase>, IReadOnlyMasterDatabase
+    public class MasterDatabase : ContentDatabase<IContentDatabase>, IReadOnlyMasterDatabase, IDatabaseRegistrationContext
     {
         private readonly Dictionary<Type, ContentKey> _keysByType = new();
 
@@ -32,7 +32,7 @@ namespace Aimless.ModLoader.Content.Database
             return GetContent(key);
         }
 
-        public bool AddContent(ContentKey key, Type type, IContentDatabase value)
+        private bool AddContent(ContentKey key, Type type, IContentDatabase value)
         {
             if (_keysByType.ContainsKey(type))
             {
@@ -67,7 +67,7 @@ namespace Aimless.ModLoader.Content.Database
             RegisterDatabase(key, typeof(TContent), database, registrationType);
         }
         
-        public void RegisterDatabase(ContentKey key, Type? type, IContentDatabase database, DBRegistrationType registrationType = DBRegistrationType.Any)
+        private void RegisterDatabase(ContentKey key, Type? type, IContentDatabase database, DBRegistrationType registrationType = DBRegistrationType.Any)
         {
             if (type != null)
             {

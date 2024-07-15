@@ -8,19 +8,12 @@
     /// A reference to an entry from a <see cref="ContentDatabase{TContent}"/>
     /// </summary>
     /// <typeparam name="TContent">Type of content this reference relates to</typeparam>
-    public struct DatabaseReference<TContent> where TContent : class
-    {
+    public struct DatabaseReference<TContent> where TContent : class {
         /// <summary>
         /// Renturns a value this reference points to or null if given database does not contein specified value
         /// </summary>
         /// <exception cref="ApplicationException">when requested datgabase could not be found</exception>
-        public TContent? Value
-        {
-            get
-            {
-                return AssertValue();
-            } 
-        }
+        public TContent? Value => AssertValue();
 
         private ContentKey contentKey;
         private ContentKey? databaseKey;

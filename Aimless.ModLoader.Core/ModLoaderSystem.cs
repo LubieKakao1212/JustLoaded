@@ -11,7 +11,7 @@ namespace Aimless.ModLoader.Core;
 public class ModLoaderSystem {
     public InitializationPhase CurrentInitPhase { get; private set; }
     public IReadOnlyMasterDatabase MasterDb => _masterDb;
-
+    
     private readonly IModProvider _modProvider;
     private readonly IModFilter _modFilter;
     private readonly MasterDatabase _masterDb;
@@ -173,9 +173,16 @@ public class ModLoaderSystem {
         CurrentInitPhase = InitializationPhase.ModSystemInitializing;
         
         var resolver = new OrderedResolver<ILoadingPhase>();
-        foreach (var mod in _mods.ContentValues) {
-            mod.Initializer.SystemInit(mod, resolver);
+        try {
+            foreach (var mod in _mods.ContentValues) {
+                mod.Initializer.SystemInit(mod, resolver);
+            }
         }
+        catch (Exception) {
+            CurrentInitPhase = InitializationPhase.ErroredGeneric;
+            throw;
+        }
+        
 
         _loadingPhases.Init(resolver.Resolve());
         CurrentInitPhase = InitializationPhase.ModSystemInitialized;
@@ -189,10 +196,16 @@ public class ModLoaderSystem {
         CurrentInitPhase.AssertAt(InitializationPhase.ModSystemInitialized);
         CurrentInitPhase = InitializationPhase.Loading;
 
-        foreach (var phase in _loadingPhases.ContentValues) {
-            phase.Load(this);
+        try {
+            foreach (var phase in _loadingPhases.ContentValues) {
+                phase.Load(this);
+            }
         }
-        
+        catch (Exception) {
+            CurrentInitPhase = InitializationPhase.ErroredGeneric;
+            throw;
+        }
+
         CurrentInitPhase = InitializationPhase.Ready;
     }
     
