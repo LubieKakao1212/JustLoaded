@@ -1,5 +1,5 @@
-using Aimless.ModLoader.Core;
-using Aimless.ModLoader.Core.Discovery;
+using JustLoaded.Core;
+using JustLoaded.Core.Discovery;
 
 namespace Test;
 

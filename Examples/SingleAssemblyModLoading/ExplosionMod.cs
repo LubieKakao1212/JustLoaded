@@ -1,4 +1,4 @@
-using Aimless.ModLoader.Core.Reflect;
+using JustLoaded.Core.Reflect;
 
 namespace SingleAssemblyModLoading;
 

@@ -1,6 +1,6 @@
-using Aimless.ModLoader.Core;
-using Aimless.ModLoader.Core.Reflect;
-using Aimless.ModLoader.Util;
+using JustLoaded.Core;
+using JustLoaded.Core.Reflect;
+using JustLoaded.Util;
 
 namespace SingleAssemblyModLoading;
 

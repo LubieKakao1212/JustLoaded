@@ -1,7 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-using Aimless.ModLoader.Core;
-using Aimless.ModLoader.Util;
+using JustLoaded.Core;
+using JustLoaded.Util;
 using Test;
 
 Console.WriteLine("Hello, World!");

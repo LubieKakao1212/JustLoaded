@@ -1,7 +1,7 @@
-using Aimless.ModLoader.Content;
-using Aimless.ModLoader.Core;
-using Aimless.ModLoader.Core.Loading;
-using Aimless.ModLoader.Util;
+using JustLoaded.Content;
+using JustLoaded.Core;
+using JustLoaded.Core.Loading;
+using JustLoaded.Util;
 
 namespace Test;
 

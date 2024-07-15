@@ -1,7 +1,7 @@
-﻿using Aimless.ModLoader.Content.Database;
-using Aimless.ModLoader.Core;
-using Aimless.ModLoader.Core.Discovery;
-using Aimless.ModLoader.Filesystem;
+﻿using JustLoaded.Content.Database;
+using JustLoaded.Core;
+using JustLoaded.Core.Discovery;
+using JustLoaded.Filesystem;
 using MultiAssembly.Game;
 
 Console.WriteLine("Hello, World!");

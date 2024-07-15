@@ -1,7 +1,7 @@
-using Aimless.ModLoader.Content;
-using Aimless.ModLoader.Content.Database;
-using Aimless.ModLoader.Core;
-using Aimless.ModLoader.Core.Reflect;
+using JustLoaded.Content;
+using JustLoaded.Content.Database;
+using JustLoaded.Core;
+using JustLoaded.Core.Reflect;
 using MultiAssembly.Game;
 
 namespace MultiAssembly.FunMod;

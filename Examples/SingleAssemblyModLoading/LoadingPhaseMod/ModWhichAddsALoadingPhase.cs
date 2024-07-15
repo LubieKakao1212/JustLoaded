@@ -1,8 +1,8 @@
-using Aimless.ModLoader.Content;
-using Aimless.ModLoader.Core;
-using Aimless.ModLoader.Core.Debug;
-using Aimless.ModLoader.Core.Loading;
-using Aimless.ModLoader.Core.Reflect;
+using JustLoaded.Content;
+using JustLoaded.Core;
+using JustLoaded.Core.Debug;
+using JustLoaded.Core.Loading;
+using JustLoaded.Core.Reflect;
 
 namespace SingleAssemblyModLoading.LoadingPhaseMod;
 

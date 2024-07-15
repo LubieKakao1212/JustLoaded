@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Aimless.ModLoader.Core\Aimless.ModLoader.Core.csproj" />
+      <ProjectReference Include="..\..\JustLoaded.Core\JustLoaded.Core.csproj" />
     </ItemGroup>
 
 </Project>
