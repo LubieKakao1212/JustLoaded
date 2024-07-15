@@ -25,11 +25,11 @@ jobs:
     runs-on: ${{ matrix.os }}-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup dotnet ${{ env.dotnet-version }}
+      - name: Setup dotnet 8.0.x #${{ env.dotnet-version }}
         uses: actions/setup-dotnet@v3
         id: setup-dotnet
         with:
-          dotnet-version: ${{ env.dotnet-version }}
+          dotnet-version: 8.0.x #${{ env.dotnet-version }}
       - name: Create temporary global.json
         run: |
           echo '{"sdk":{"version": "${{ steps.setup-dotnet.outputs.dotnet-version }}"}}' > ./global.json
