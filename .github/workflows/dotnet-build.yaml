@@ -35,7 +35,11 @@ jobs:
   Pack:
     strategy:
       matrix:
-        project: [JustLoaded.Content, ]
+        project:
+          - JustLoaded.Content
+          - JustLoaded.Core
+          - JustLoaded.Filesystem
+          - JustLoaded.Util
     env:
       dotnet-version: 7.0.x
     runs-on: ubuntu-latest
@@ -65,7 +69,11 @@ jobs:
       packages: write
     strategy:
       matrix:
-        project: [test-project]
+        project:
+          - JustLoaded.Content
+          - JustLoaded.Core
+          - JustLoaded.Filesystem
+          - JustLoaded.Util
     env:
       dotnet-version: 7.0.x
     runs-on: ubuntu-latest

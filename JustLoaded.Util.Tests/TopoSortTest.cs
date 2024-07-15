@@ -132,7 +132,7 @@ public class TopoSortTests
         return sorter;
     }
 
-    private TopoSorter<T> AddDeps<T>(TopoSorter<T> sorter, IEnumerable<(T source, T dependency)> dependencies) {
+    private TopoSorter<T> AddDeps<T>(TopoSorter<T> sorter, IEnumerable<(T source, T dependency)> dependencies) where T : notnull {
         foreach (var dep in dependencies)
         {
             sorter.AddDependency(dep.source, dep.dependency);

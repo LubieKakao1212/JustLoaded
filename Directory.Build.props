@@ -2,5 +2,6 @@
     <PropertyGroup>
         <MSBuildEnableWorkloadResolver>false</MSBuildEnableWorkloadResolver>
         <Version>0.0.1</Version>
+        <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
     </PropertyGroup>
 </Project>

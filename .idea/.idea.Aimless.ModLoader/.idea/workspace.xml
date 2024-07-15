@@ -10,10 +10,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ddd7ae70-ff39-4df4-9b09-0e14babedcf7" name="Changes" comment="Renamed the project form Aimless.ModLoader to JustLoaded + Made Readme.md more descriptive">
-      <change afterPath="$PROJECT_DIR$/.github/workflows/dotnet-build.yaml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.github/workflows/dotnet-test.yaml" afterDir="false" />
+    <list default="true" id="ddd7ae70-ff39-4df4-9b09-0e14babedcf7" name="Changes" comment="Added github workflows">
+      <change beforePath="$PROJECT_DIR$/.github/workflows/dotnet-build.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/dotnet-build.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Aimless.ModLoader/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Aimless.ModLoader/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Directory.Build.props" beforeDir="false" afterPath="$PROJECT_DIR$/Directory.Build.props" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JustLoaded.Content/JustLoaded.Content.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/JustLoaded.Content/JustLoaded.Content.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JustLoaded.Core/JustLoaded.Core.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/JustLoaded.Core/JustLoaded.Core.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JustLoaded.FileSystem.Tests/JustLoaded.FileSystem.Tests.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/JustLoaded.FileSystem.Tests/JustLoaded.FileSystem.Tests.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JustLoaded.Filesystem/JustLoaded.Filesystem.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/JustLoaded.Filesystem/JustLoaded.Filesystem.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JustLoaded.Util.Tests/JustLoaded.Util.Tests.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/JustLoaded.Util.Tests/JustLoaded.Util.Tests.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JustLoaded.Util.Tests/TopoSortTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JustLoaded.Util.Tests/TopoSortTest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JustLoaded.Util/JustLoaded.Util.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/JustLoaded.Util/JustLoaded.Util.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test/Test.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Test/Test.csproj" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,7 +44,7 @@
 }</component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/LubieKakao1212/Aimless.ModLoader.git&quot;,
+    &quot;url&quot;: &quot;https://github.com/LubieKakao1212/JustLoaded.git&quot;,
     &quot;accountId&quot;: &quot;217a6d46-adb0-4eca-b0cb-a17e657cf325&quot;
   }
 }</component>
@@ -86,12 +94,13 @@
     <setting file="file://$PROJECT_DIR$/JustLoaded.Content/Database/ContentDatabase.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/JustLoaded.Content/Database/IContentDatabase.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/JustLoaded.Content/Database/IReadOnlyContentDatabase.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/UuMuU/Documents/Monogame/Aimless/Aimless.ModLoader/JustLoaded.Util.Tests/TopoSortTest.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/UuMuU/Documents/Monogame/Aimless/Aimless.ModLoader/Test/ExampleModFilter.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/UuMuU/Documents/Monogame/Aimless/Aimless.ModLoader/Test/PrintModsLoadingPhase.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="SWEA" />
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 7
@@ -236,7 +245,7 @@
       <workItem from="1720859250982" duration="13382000" />
       <workItem from="1720975600770" duration="7890000" />
       <workItem from="1721037723715" duration="261000" />
-      <workItem from="1721037993427" duration="5976000" />
+      <workItem from="1721037993427" duration="6593000" />
     </task>
     <task id="LOCAL-00001" summary="Added Util module + Implemented TopoSorter and its tests + Implemented ArrayDatabase">
       <option name="closed" value="true" />
@@ -318,7 +327,15 @@
       <option name="project" value="LOCAL" />
       <updated>1721047847582</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Added github workflows">
+      <option name="closed" value="true" />
+      <created>1721050681015</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1721050681015</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -349,7 +366,8 @@
     <MESSAGE value="Added AssemblyModProvider + Added first proper example" />
     <MESSAGE value="Added MultiAssembly example + Added database related entrypoints and loading phases" />
     <MESSAGE value="Renamed the project form Aimless.ModLoader to JustLoaded + Made Readme.md more descriptive" />
-    <option name="LAST_COMMIT_MESSAGE" value="Renamed the project form Aimless.ModLoader to JustLoaded + Made Readme.md more descriptive" />
+    <MESSAGE value="Added github workflows" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added github workflows" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
