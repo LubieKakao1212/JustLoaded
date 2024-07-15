@@ -59,7 +59,10 @@ jobs:
         uses: actions/setup-dotnet@v3
         id: setup-dotnet
         with:
-          dotnet-version: ${{ env.dotnet-version }}
+          dotnet-version: | #${{ env.dotnet-version }}
+            8.0.x 
+            7.0.x 
+            6.0.x 
       - name: Create temporary global.json
         run: |
           echo '{"sdk":{"version": "${{ steps.setup-dotnet.outputs.dotnet-version }}"}}' > ./global.json
@@ -96,7 +99,10 @@ jobs:
         uses: actions/setup-dotnet@v3
         id: setup-dotnet
         with:
-          dotnet-version: ${{ env.dotnet-version }}
+          dotnet-version: | #${{ env.dotnet-version }}
+            8.0.x 
+            7.0.x 
+            6.0.x 
       - name: Create temporary global.json
         run: |
           echo '{"sdk":{"version": "${{ steps.setup-dotnet.outputs.dotnet-version }}"}}' > ./global.json
