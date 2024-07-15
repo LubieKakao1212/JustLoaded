@@ -1,6 +1,7 @@
 using JustLoaded.Content;
 using JustLoaded.Core;
 using JustLoaded.Core.Debug;
+using JustLoaded.Core.Entrypoint;
 using JustLoaded.Core.Loading;
 using JustLoaded.Core.Reflect;
 
