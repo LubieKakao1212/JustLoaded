@@ -86,7 +86,7 @@ jobs:
           - JustLoaded.Filesystem
           - JustLoaded.Util
     env:
-      dotnet-version:${{ inputs.dotnet_version || '8.0.x' }}
+      dotnet-version: ${{ inputs.dotnet_version || '8.0.x' }}
     runs-on: ubuntu-latest
     needs: Pack
 
