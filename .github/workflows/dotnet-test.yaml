@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu, windows, macos]
-        dotnet-version: [8.0.x]
+        dotnet-version: [6.0.x, 7.0.x, 8.0.x]
     runs-on: ${{ matrix.os }}-latest
     
     steps:
@@ -22,10 +22,14 @@ jobs:
         uses: actions/setup-dotnet@v3
         id: setup-dotnet
         with:
-          dotnet-version: ${{ matrix.dotnet-version }}
+          dotnet-version: |
+            6.0.x, 
+            7.0.x, 
+            8.0.x
+#          dotnet-version: ${{ matrix.dotnet-version }}
       - name: Create temporary global.json
         run: |
-          echo '{"sdk":{"version": "${{ steps.setup-dotnet.outputs.dotnet-version }}"}}' > ./global.json
+          echo '{"sdk":{"version": "${{  matrix.dotnet-version }}"}}' > ./global.json
       - name: Display dotnet version
         run: dotnet --version
       - name: Run Tests
