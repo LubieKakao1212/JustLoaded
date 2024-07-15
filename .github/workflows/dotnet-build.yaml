@@ -105,7 +105,7 @@ jobs:
             6.0.x 
       - name: Create temporary global.json
         run: |
-          echo '{"sdk":{"version": "${{ steps.setup-dotnet.outputs.dotnet-version }}"}}' > ./global.json
+          echo '{"sdk":{"version": "${{ env.dotnet-version }}"}}' > ./global.json
       - name: Auth to Github Packages
         run: dotnet nuget add source --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/LubieKakao1212/index.json"
       - name: Push Package
