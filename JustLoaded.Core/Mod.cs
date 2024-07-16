@@ -32,7 +32,7 @@ public class Mod {
             throw new Exception("A mod cannot have more than one initializer");
         }
         
-        this.Initializer = initializer;
+        this.Initializer = GetGlobalObject<IModInitializer>(initializer.GetType(), () => initializer);
         return this;
     }
 
