@@ -9,12 +9,7 @@ public abstract class EntrypointLoadingPhase<TEntrypoint> : ILoadingPhase {
     protected EntrypointLoadingPhase() { }
     
     public void Load(ModLoaderSystem modLoader) {
-        var mods = (ContentDatabase<Mod>?)modLoader.MasterDb.GetContent(new ContentKey("core:mods"));
-        
-        if (mods == null) {
-            Console.Error.WriteLine("Impossible situation occured.");
-            return;
-        }
+        var mods = (ContentDatabase<Mod>)modLoader.MasterDb.GetDatabase<Mod>(new ContentKey("core:mods"));
         
         Setup(modLoader);
         foreach (var modEntry in mods.ContentEntries) {

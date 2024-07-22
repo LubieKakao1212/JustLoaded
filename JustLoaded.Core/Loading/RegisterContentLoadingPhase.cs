@@ -8,6 +8,8 @@ using JustLoaded.Core.Reflect;
 namespace JustLoaded.Core.Loading;
 
 public class RegisterContentLoadingPhase : ILoadingPhase {
+
+    private static readonly MethodInfo _genericRegister = typeof(IContentDatabase).GetMethod(nameof(IContentDatabase.AddContent))!;
     
     public void Load(ModLoaderSystem modLoader) {
         var masterDb = modLoader.MasterDb;
@@ -17,8 +19,6 @@ public class RegisterContentLoadingPhase : ILoadingPhase {
         foreach (var modEntry in mods!.ContentEntries) {
             var modId = ModMetadata.ToModId(modEntry.Key);
             var mod = modEntry.Value;
-
-            var genericRegister = typeof(IContentDatabase).GetMethod(nameof(IContentDatabase.AddContent));
             
             foreach (var assembly in mod.Assemblies) {
                 foreach (var container in assembly.GetModTypeByAttribute<ContentContainerAttribute>(modId)) {
@@ -34,7 +34,7 @@ public class RegisterContentLoadingPhase : ILoadingPhase {
                             }
                             else {
                                 ContentKey dbKey = ToKey(dbId, modId);
-                                db = masterDb.GetContent(dbKey);
+                                db = masterDb.GetDatabase(dbKey, contentType);
                             }
 
                             if (db == null) {
@@ -58,7 +58,7 @@ public class RegisterContentLoadingPhase : ILoadingPhase {
                                 continue;
                             }
 
-                            var register = genericRegister!.MakeGenericMethod(contentType);
+                            var register = _genericRegister!.MakeGenericMethod(contentType);
                             var result = (bool) register.Invoke(db, new[] { key, value })!;
                             if (!result) {
                                 //TODO use logger (warning)

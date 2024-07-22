@@ -102,7 +102,7 @@ namespace JustLoaded.Content.Database
             }
         }
         
-        //TODO exception type
+        /*//TODO exception type
         /// <exception cref="ApplicationException">when no database is found</exception>
         /// <exception cref="UnsupportedContentTypeException">when database under <paramref name="key"/> does not support <typeparamref name="TContent"/></exception>
         public IContentDatabase GetDatabase<TContent>(ContentKey? key)
@@ -123,15 +123,30 @@ namespace JustLoaded.Content.Database
             }
             AssertContentType(db, contentType);
             return db;
-        }
+        }*/
+        
+        public IContentDatabase GetDatabase(ContentKey? key, Type type) {
+            if (key == null) {
+                key = KeyByContentType(type);
+            }
 
-        //TODO exception type
-        /// <exception cref="ApplicationException">when no database is found </exception>
-        public IContentDatabase GetDatabase<TContent>()
-        {
-            return GetDatabase<TContent>(null);
-        }
+            if (key == null) {
+                //TODO exception
+                throw new ApplicationException($"No registered database for content type { type }");
+            }
+            
+            var db = GetContent(key.Value);
+            
+            //TODO exception
+            db = db ?? throw new ApplicationException($"Database with key { key } could not be found");
 
+            if (!db.IsTypeSupported(type)) {
+                throw new ArgumentException($"Database with key { key } does not support requested Type { type }");
+            }
+
+            return db;
+        }
+        
         private static void AssertContentType(IContentDatabase db, Type contentType)
         {
             if (!db.IsTypeSupported(contentType)) 

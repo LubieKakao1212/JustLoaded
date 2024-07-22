@@ -15,36 +15,30 @@
         /// <exception cref="ApplicationException">when requested datgabase could not be found</exception>
         public TContent? Value => AssertValue();
 
-        private ContentKey contentKey;
-        private ContentKey? databaseKey;
+        private BoundContentKey<TContent> key;
 
-        private TContent? value = null;
-        private IContentDatabase? database = null;
+        private TContent? _value = null;
+        private IReadOnlyContentDatabase? _database = null;
 
-        private MasterDatabase? masterDatabase;
+        private IReadOnlyMasterDatabase? _masterDatabase;
 
         /// <param name="contentKey"></param>
         /// <param name="databaseKey">When null a default database for <typeparamref name="TContent"/> will be used</param>
-        public DatabaseReference(ContentKey contentKey, ContentKey? databaseKey = null, MasterDatabase? masterDatabase = null)
-        {
-            this.contentKey = contentKey;
-            this.databaseKey = databaseKey;
-            this.masterDatabase = masterDatabase;
+        /// <param name="key"></param>
+        /// <param name="masterDatabase"></param>
+        public DatabaseReference(in BoundContentKey<TContent> key, IReadOnlyMasterDatabase? masterDatabase = null) {
+            this.key = key;
+            this._masterDatabase = masterDatabase;
         }
 
         private TContent? AssertValue()
         {
-            if (value != null)
+            if (_value != null)
             {
-                return value;
-            }
-            else if (database == null)
-            {
-                masterDatabase ??= GlobalDatabases.Master;
-                database = masterDatabase.GetDatabase<TContent>(databaseKey);
+                return _value;
             }
 
-            return value = database.GetContent<TContent>(contentKey);
+            return _value = key.FetchContent(ref _database, _masterDatabase);
         }
     }
 }
