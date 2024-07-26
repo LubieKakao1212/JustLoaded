@@ -1,4 +1,4 @@
-﻿using JustLoaded.Content.Database.Execeptions;
+﻿using JustLoaded.Content.Database.Exceptions;
 
 namespace JustLoaded.Content.Database
 {
@@ -9,8 +9,6 @@ namespace JustLoaded.Content.Database
         public override IEnumerable<TContent> ContentValues => orderedEntries.Select((entry) => entry.Value);
         public override IEnumerable<KeyValuePair<ContentKey, TContent>> ContentEntries => orderedEntries;
         public override IEnumerable<ContentKey> ContentKeys => orderedEntries.Select((entry) => entry.Key);
-
-        private bool locked;
         
         public ArrayDatabase() 
         {
@@ -18,16 +16,17 @@ namespace JustLoaded.Content.Database
         }
 
         public void Init(IEnumerable<KeyValuePair<ContentKey, TContent>> orderedEntries) {
-            if (locked) {
+            if (IsLocked) {
                 throw new DatabaseLockedException();
             }
-            locked = true;
             
             foreach (var entry in orderedEntries)
             {
                 this.orderedEntries.Add(entry);
                 base.AddContent(entry.Key, entry.Value);
             }
+            
+            Lock();
         }
         
         public override bool AddContent(ContentKey key, TContent value)

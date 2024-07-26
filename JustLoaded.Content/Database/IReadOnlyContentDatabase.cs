@@ -9,6 +9,10 @@ public interface IReadOnlyContentDatabase {
 
     Type[] SupportedContentTypes { get; }
 
+    IEnumerable<ContentKey> GetContentKeys<TContent>() where TContent : notnull;
+    IEnumerable<KeyValuePair<ContentKey, TContent>> GetContentEntries<TContent>() where TContent : notnull;
+    IEnumerable<TContent> GetContentValues<TContent>() where TContent : notnull;
+    
     bool IsTypeSupported(Type type)
     {
         return SupportedContentTypes.Contains(type);

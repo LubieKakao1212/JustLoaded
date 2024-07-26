@@ -1,4 +1,4 @@
-﻿namespace JustLoaded.Content.Database.Execeptions
+﻿namespace JustLoaded.Content.Database.Exceptions
 {
     public class UnsupportedContentTypeException : ApplicationException
     {
