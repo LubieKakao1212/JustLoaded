@@ -1,9 +1,8 @@
-using System.Security.AccessControl;
 using JustLoaded.Content;
 
 namespace JustLoaded.Filesystem;
 
-[Obsolete("Experimental)")]
+[Obsolete("Experimental")]
 public class RelativeFilesystem : IFilesystem {
 
     public bool HandlesSource => _nestedFilesystem.HandlesSource;
@@ -12,8 +11,12 @@ public class RelativeFilesystem : IFilesystem {
     private readonly string _pathPrefix;
     
     public RelativeFilesystem(IFilesystem nested, string pathPrefix) {
-        this._nestedFilesystem = nested;
-        this._pathPrefix = pathPrefix;
+        _nestedFilesystem = nested;
+        _pathPrefix = pathPrefix;
+
+        if (_pathPrefix.EndsWith('/')) {
+            _pathPrefix = _pathPrefix.Substring(0, _pathPrefix.Length);
+        }
     }
 
     Stream? IFilesystem.OpenFile(string path) {
@@ -41,7 +44,7 @@ public class RelativeFilesystem : IFilesystem {
     }
 
     private string TransformPath(string path) {
-        return Path.Combine(_pathPrefix, path);
+        return _pathPrefix + '/' + path;
     }
 
     private ContentKey TransformKey(in ContentKey key) {

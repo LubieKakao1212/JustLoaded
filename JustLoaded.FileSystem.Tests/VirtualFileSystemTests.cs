@@ -2,67 +2,16 @@ using JustLoaded.Filesystem;
 
 namespace JustLoaded.FileSystem.Tests;
 
-public class VirtualFilesystemTests {
+public class VirtualFilesystemTests : FilesystemTester<VirtualFilesystem, FilesystemTestSource> {
+
+    protected override VirtualFilesystem SetupFilesystem() {
+        return new VirtualFilesystem();
+    }
+
+    protected override void MakeFile(string fileName, string content) {
+        fs.AddFile(fileName, content);
+    }
     
-    [SetUp]
-    public void Setup() {
-    }
-
-    [TestCase("coolFile")]
-    [TestCase("dir/coolFile")]
-    [TestCase("dir1/coolFile")]
-    public void AddGetFileFlat(string fileName) {
-        var fileContent = "A Cool File Content";
-        
-        var vfs = new VirtualFilesystem();
-        vfs.AddFile(fileName, fileContent);
-
-        using var stream = vfs.OpenFile(fileName);
-        Assert.That(stream, Is.Not.Null);
-        
-        using var text = new StreamReader(stream);
-        Assert.That(text.ReadLine(), Is.EqualTo(fileContent));
-    }
-
-    [TestCase("file1", "file2")]
-    [TestCase("dir/file1", "file2")]
-    [TestCase("file1", "dir/file2")]
-    [TestCase("dir/file1", "dir/file2")]
-    public void AddGetMultiple(string file1, string file2) {
-        var file1Content = "content1";
-        var file2Content = "content2";
-        
-        var vfs = new VirtualFilesystem();
-        vfs.AddFile(file1, file1Content);
-        vfs.AddFile(file2, file2Content);
-
-        AssertFileContents(vfs, file1, file1Content);
-        AssertFileContents(vfs, file2, file2Content);
-    }
-
-    [TestCase("/", new[] { "dir/file1", "file2"}, new[] { "dir" })]
-    [TestCase("/", new[] { "dir/file1", "dir/file2"}, new[] { "dir" })]
-    [TestCase("/", new[] { "dir/file1", "dir2/file2"}, new[] { "dir", "dir2" })]
-    [TestCase("/a/", new[] { "a/dir/file1", "a/dir2/file2"}, new[] { "a/dir", "a/dir2" })]
-    [TestCase("/a", new[] { "a/dir/file1", "a/dir2/file2"}, new[] { "a/dir", "a/dir2" })]
-    [TestCase("/a/", new[] { "a/dir/file1", "a/file2"}, new[] { "a/dir" })]
-    [TestCase("/a/b/", new[] { "a/b/file1", "a/c/file2", "a/b/dir/file2"}, new[] { "a/b/dir" })]
-    public void ListPaths(string listDir, string[] files, string[] expectedDirs) {
-        var vfs = new VirtualFilesystem();
-        
-        foreach (var file in files) {
-            vfs.AddFile(file, "");
-        }
-
-        var dirsSet = new HashSet<string>(expectedDirs);
-        foreach (var dir in vfs.ListPaths(listDir)) {
-            Assert.That(dirsSet, Contains.Item(dir.path));
-            dirsSet.Remove(dir.path);
-        }
-        
-        Assert.That(dirsSet, Is.Empty);
-    }
-
     [TestCase("/", new[] { "dir/file1", "file2"}, new[] { "file2" })]
     [TestCase("/", new[] { "dir/file1", "dir/file2"}, new string[] { })]
     [TestCase("/dir", new[] { "dir/file1", "dir2/file2"}, new[] { "dir/file1" })]
@@ -71,6 +20,7 @@ public class VirtualFilesystemTests {
     [TestCase("/a/", new[] { "a/dir/file1", "a/file2"}, new[] { "a/file2" })]
     public void ListFilesShallow(string listDir, string[] files, string[] expectedFiles) {
         DoListFiles(listDir, files, expectedFiles, "*", false);
+        //Assert.Fail("TODO");
     }
     
     [TestCase("/", new[] { "dir/file1", "file2"}, new[] { "file2", "dir/file1" })]

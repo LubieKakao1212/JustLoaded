@@ -6,10 +6,10 @@ public class PhysicalFilesystem : IFilesystem {
 
     public bool HandlesSource => false;
 
-    public string Root { get; private set; }
+    public string Root { get; }
     
     public PhysicalFilesystem(string root) {
-        this.Root = Path.GetFullPath(root);
+        Root = Path.GetFullPath(root);
     }
     
     Stream? IFilesystem.OpenFile(string path) {
@@ -30,7 +30,7 @@ public class PhysicalFilesystem : IFilesystem {
 
     public IEnumerable<ContentKey> ListFiles(string path, string pattern = "*", bool recursive = false) {
         try {
-            return Directory.EnumerateFiles(ApplyPath(Root), pattern, recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly).Select((p) => new ContentKey("", GetStandardPath(p)));
+            return Directory.EnumerateFiles(ApplyPath(path), pattern, recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly).Select((p) => new ContentKey("", GetStandardPath(p)));
         }
         catch (DirectoryNotFoundException e) {
             //TODO use Logger
@@ -59,6 +59,5 @@ public class PhysicalFilesystem : IFilesystem {
     private string GetStandardPath(string path) {
         return Path.GetRelativePath(Root, path).Replace('\\', '/');
     }
-    
     
 }

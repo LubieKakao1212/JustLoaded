@@ -4,9 +4,6 @@ using JustLoaded.Content;
 
 namespace JustLoaded.Filesystem;
 
-/// <summary>
-/// 
-/// </summary>
 /// <remarks>Does not support moving up i.e. "../CoolDirectory/CoolFile"</remarks>
 public class VirtualFilesystem : IFilesystem {
 
@@ -19,7 +16,8 @@ public class VirtualFilesystem : IFilesystem {
     private readonly Dictionary<string, byte[]> _files = new();
     private readonly Dictionary<string, VirtualFilesystem> _directories = new();
     private readonly char[] _illegalCharacters;
-
+    public bool HandlesSource => false;
+    
     public VirtualFilesystem() : this(DefaultIllegalCharacters) {
         
     }
@@ -40,9 +38,8 @@ public class VirtualFilesystem : IFilesystem {
         AddFile(filePath, Encoding.ASCII.GetBytes(content));
     }
     
-    public bool HandlesSource => false;
-    
     public Stream? OpenFile(string filePath) {
+        filePath = filePath.CollapseAbsoluteFilePath();
         return CallForPath(filePath, false,
             (system, file) => {
                 if (!system._files.TryGetValue(file, out var content)) {
@@ -54,6 +51,7 @@ public class VirtualFilesystem : IFilesystem {
     }
 
     public IEnumerable<ContentKey> ListFiles(string path, string pattern = "*", bool recursive = false) {
+        path = path.CollapseAbsolutePath();
         return CallForPath(path, false,
             (system, file) => {
                 if (file != "") {
@@ -73,11 +71,12 @@ public class VirtualFilesystem : IFilesystem {
                     }
                 }
 
-                return list.Where((str) => MatchPattern(str, pattern)).Select((str) => new ContentKey("", str));
+                return list.Where((str) => str.MatchPattern(pattern)).Select((str) => new ContentKey("", str));
             });
     }
 
     public IEnumerable<ContentKey> ListPaths(string path) {
+        path = path.CollapseAbsolutePath();
         return CallForPath(path, false,
             (system, file) => {
                 if (file != "") {
@@ -96,7 +95,7 @@ public class VirtualFilesystem : IFilesystem {
         }
         var i = path.IndexOf('/');
         
-        //Skip '/' if its the first character
+        //Skip '/' if its the first character-
         if (i == 0) {
             path = path.Substring(1);
             i = path.IndexOf('/');
@@ -127,19 +126,6 @@ public class VirtualFilesystem : IFilesystem {
         }
     }
 
-    private bool MatchPattern(string str, string pattern) {
-        var segments = pattern.Split('*');
-        foreach (var p in segments) {
-            var segment = p.Replace("*", "");
-            var location = str.IndexOf(segment, StringComparison.Ordinal);
-            if (location < 0) {
-                return false;
-            }
-            str = str.Substring(location + segment.Length);
-        }
-        return true;
-    }
-
     private string CombinePath(string path, string secondPath) {
         var s = 0;
         var l = path.Length;
@@ -156,6 +142,5 @@ public class VirtualFilesystem : IFilesystem {
         }
         return path + "/" + secondPath;
     }
-    
     
 }

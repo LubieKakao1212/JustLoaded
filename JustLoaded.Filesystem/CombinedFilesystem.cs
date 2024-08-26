@@ -7,7 +7,7 @@ public class CombinedFilesystem : IFilesystem {
     
     public bool HandlesSource => true;
 
-    private Dictionary<string, IFilesystem> _fileSystems = new();
+    private readonly Dictionary<string, IFilesystem> _fileSystems = new();
 
     public void AddFileSystem(string name, IFilesystem filesystem) {
         _fileSystems.Add(name, filesystem);
@@ -54,5 +54,4 @@ public class CombinedFilesystem : IFilesystem {
         var fs = _fileSystems[path.source];
         return fs.ListPaths(path).Select((key) => new ContentKey(path.source, key.path));
     }
-    
 }
