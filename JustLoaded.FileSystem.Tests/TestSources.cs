@@ -2,101 +2,96 @@ using System.Collections;
 using System.Threading.Tasks.Sources;
 using JustLoaded.Content;
 using JustLoaded.Filesystem;
+using static JustLoaded.FileSystem.Tests.IFilesystemTestSource;
 
 namespace JustLoaded.FileSystem.Tests;
 
 public interface IFilesystemTestSource {
 
     public IEnumerable SourceSingleFileFlat => GetFileFlatFileName.Select(file => new TestCaseData(file));
-    public IEnumerable SourceGetMultipleFiles => GetFilesFlatFileNames.Select(arr=> new TestCaseData((IEnumerable<string>)arr));
-    public IEnumerable SourceListDirs => GetListDirsQueryPath.Zip(GetListDirsFiles, GetListDirsExpectedResult).Select(elements=> new TestCaseData(elements.First, elements.Second, elements.Third));
-    public IEnumerable SourceListFilesShallow => GetListFilesShallowQuery.Zip(GetListFilesShallowFiles, GetListFilesShallowExpectedResult).Select(elements=> new TestCaseData(elements.First, elements.Second, elements.Third));
-    public IEnumerable SourceListFilesRecursive => GetListFilesRecursiveQuery.Zip(GetListFilesRecursiveFiles, GetListFilesRecursiveExpectedResult).Select(elements=> new TestCaseData(elements.First, elements.Second, elements.Third));
+    public IEnumerable SourceGetMultipleFiles => GetFilesFlatFileNames.Select(arr=> new TestCaseData((IEnumerable<ModAssetPath>)arr));
+    public IEnumerable SourceListDirs => GetListDirsSource.Select(MakeTestCase);
+    public IEnumerable SourceListFilesShallow => GetListFilesShallowSource.Select(MakeTestCase);
+    public IEnumerable SourceListFilesRecursive => GetListFilesRecursiveSource.Select(MakeTestCase);
+    public IEnumerable SourceListFilesPattern => GetListFilesPatternSource.Select(MakeTestCase);
     
+    public IEnumerable<ModAssetPath> GetFileFlatFileName { get; }
+    public IEnumerable<ModAssetPath[]> GetFilesFlatFileNames { get; }
     
-    public IEnumerable<string> GetFileFlatFileName { get; }
-    public IEnumerable<string[]> GetFilesFlatFileNames { get; }
+    protected IEnumerable<(ModAssetPath query, ModAssetPath[] files, ModAssetPath[] results)> GetListDirsSource { get; }
+    protected IEnumerable<(ModAssetPath query, ModAssetPath[] files, ModAssetPath[] results)> GetListFilesShallowSource { get; }
+    protected IEnumerable<(ModAssetPath query, ModAssetPath[] files, ModAssetPath[] results)> GetListFilesRecursiveSource { get; }
+    protected IEnumerable<(string pattern, ModAssetPath[] files, ModAssetPath[] results)> GetListFilesPatternSource { get; }
     
-    
-    public IEnumerable<string> GetListDirsQueryPath { get; }
-    public IEnumerable<string[]> GetListDirsFiles { get; }
-    public IEnumerable<ContentKey[]> GetListDirsExpectedResult { get; }
-    
-    
-    public IEnumerable<string> GetListFilesShallowQuery { get; }
-    public IEnumerable<string[]> GetListFilesShallowFiles { get; }
-    public IEnumerable<ContentKey[]> GetListFilesShallowExpectedResult { get; }
-    
-    public IEnumerable<string> GetListFilesRecursiveQuery { get; }
-    public IEnumerable<string[]> GetListFilesRecursiveFiles { get; }
-    public IEnumerable<ContentKey[]> GetListFilesRecursiveExpectedResult { get; }
-
-    protected IEnumerable<(string query, string[] files, ContentKey[] results)> GetListFiesRecursiveSource { get; }
-
-    public static TestCaseData MakeTestCase((string query, string[] files, ContentKey[] results) source) {
+    #region Utilities
+    public static TestCaseData MakeTestCase<TQuery>((TQuery query, ModAssetPath[] files, ModAssetPath[] results) source) {
         return new TestCaseData(source.query, source.files, source.results);
     }
+
+    public static ModAssetPath[] PathsWithBlankSource(params string[] paths) {
+        return paths.Select(s => s.BlankMod()).ToArray();
+    }
+
+    public static ModAssetPath[] Keys(params (string source, string path)[] raw) => raw.Select(rawKey => rawKey.path.AsPath().FromMod(rawKey.source)).ToArray();
+    #endregion
 }
 
 public class FilesystemTestSource : IFilesystemTestSource {
     
-    public virtual IEnumerable<string> GetFileFlatFileName => new []{"coolFile", "dir/coolFile", "dir1/coolFile"};
+    public IEnumerable<ModAssetPath> GetFileFlatFileName => PathsWithBlankSource("coolFile", "dir/coolFile", "dir1/coolFile");
 
-    public virtual IEnumerable<string[]> GetFilesFlatFileNames => new[] {
-        new [] { "file1", "file2" },
-        new [] { "dir/file1", "file2" },
-        new [] { "file1", "dir/file2" },
-        new [] { "dir/file1", "dir/file2" }
+    public IEnumerable<ModAssetPath[]> GetFilesFlatFileNames => new[] {
+        PathsWithBlankSource("file1", "file2"),
+        PathsWithBlankSource("dir/file1", "file2"),
+        PathsWithBlankSource("file1", "dir/file2"),
+        PathsWithBlankSource("dir/file1", "dir/file2")
     };
 
-    public IEnumerable<string> GetListDirsQueryPath => new[] { "./", "./", "./", "./a", "./a/", "./a/", "./a/b" };
+    public IEnumerable<(ModAssetPath query, ModAssetPath[] files, ModAssetPath[] results)> GetListDirsSource {
+        get {
+            yield return ("./".BlankMod(), PathsWithBlankSource("dir/file1", "file2"), PathsWithBlankSource("dir"));
+            yield return ("./".BlankMod(), PathsWithBlankSource("dir/file1", "dir/file2"), PathsWithBlankSource("dir"));
+            yield return ("./".BlankMod(), PathsWithBlankSource("dir/file1", "dir2/file2"), PathsWithBlankSource("dir", "dir2"));
+            yield return ("./a".BlankMod(), PathsWithBlankSource( "a/dir/file1", "a/dir2/file2"), PathsWithBlankSource("a/dir", "a/dir2"));
+            yield return ("./a/".BlankMod(), PathsWithBlankSource( "a/dir/file1", "a/dir2/file2"), PathsWithBlankSource("a/dir", "a/dir2"));
+            yield return ("./a/".BlankMod(), PathsWithBlankSource( "a/dir/file1", "a/file2"),  PathsWithBlankSource("a/dir"));
+            yield return ("./a/b".BlankMod(), PathsWithBlankSource( "a/b/file1", "a/c/file2", "a/b/dir/file2"), PathsWithBlankSource("a/b/dir"));
+        }
+    }
+
+    public IEnumerable<(ModAssetPath query, ModAssetPath[] files, ModAssetPath[] results)> GetListFilesShallowSource {
+        get {
+            yield return ("./".BlankMod(), PathsWithBlankSource("dir/file1", "file2"), PathsWithBlankSource("file2"));
+            yield return ("./".BlankMod(), PathsWithBlankSource("dir/file1", "dir/file2"), PathsWithBlankSource());
+            yield return ("./dir".BlankMod(), PathsWithBlankSource("dir/file1", "dir2/file2"), PathsWithBlankSource("dir/file1")); //Duplicate?
+            yield return ("./a/".BlankMod(), PathsWithBlankSource("a/dir/file1", "a/dir2/file2"), PathsWithBlankSource());
+            yield return ("./a/dir".BlankMod(), PathsWithBlankSource("a/dir/file1", "a/dir/file2"), PathsWithBlankSource("a/dir/file1", "a/dir/file2"));
+            yield return ("./a/".BlankMod(), PathsWithBlankSource("a/dir/file1", "a/file2"), PathsWithBlankSource("a/file2"));
+        }
+    }
     
-    public IEnumerable<string[]> GetListDirsFiles => new[] {
-        new[] { "dir/file1", "file2"},
-        new[] { "dir/file1", "dir/file2"},
-        new[] { "dir/file1", "dir2/file2"},
-        new[] { "a/dir/file1", "a/dir2/file2"},
-        new[] { "a/dir/file1", "a/dir2/file2"},
-        new[] { "a/dir/file1", "a/file2"},
-        new[] { "a/b/file1", "a/c/file2", "a/b/dir/file2"}
-    };
+    public IEnumerable<(ModAssetPath query, ModAssetPath[] files, ModAssetPath[] results)> GetListFilesRecursiveSource {
+        get {
+            yield return (".".BlankMod(), PathsWithBlankSource("dir/file1", "file2"), PathsWithBlankSource("file2", "dir/file1"));
+            yield return ("dir".BlankMod(), PathsWithBlankSource("dir/file1", "dir2/file2"), PathsWithBlankSource("dir/file1"));
+            yield return (".".BlankMod(), PathsWithBlankSource("dir/dir1/dir2/file1"), PathsWithBlankSource("dir/dir1/dir2/file1"));
+        }
+    }
 
-    public IEnumerable<ContentKey[]> GetListDirsExpectedResult =>
-        new[] {
-            new[] { "dir" },
-            new[] { "dir" },
-            new[] { "dir", "dir2" },
-            new[] { "a/dir", "a/dir2" },
-            new[] { "a/dir", "a/dir2" },
-            new[] { "a/dir" },
-            new[] { "a/b/dir" }
-        }.Select(arr => arr.Select(str => new ContentKey("", str)).ToArray());
-
-    public IEnumerable<string> GetListFilesShallowQuery => new[] {
-        "./",
-        "./",
-        "./dir",
-        "./a/",
-        "./a/dir",
-        "./a/"
-    };
-
-    public IEnumerable<string[]> GetListFilesShallowFiles => new[] {
-        new[] { "dir/file1", "file2" },
-        new[] { "dir/file1", "dir/file2" },
-        new[] { "dir/file1", "dir2/file2" },
-        new[] { "a/dir/file1", "a/dir2/file2" },
-        new[] { "a/dir/file1", "a/dir/file2" },
-        new[] { "a/dir/file1", "a/file2" }
-    };
-    public IEnumerable<ContentKey[]> GetListFilesShallowExpectedResult => 
-        new [] {
-            new[] { "file2" },
-            new string[] { },
-            new[] { "dir/file1" },
-            new string[] { },
-            new[] { "a/dir/file1", "a/dir/file2" },
-            new[] { "a/file2" }
-    }.Select(arr => arr.Select(str => new ContentKey("", str)).ToArray());
+    public IEnumerable<(string pattern, ModAssetPath[] files, ModAssetPath[] results)> GetListFilesPatternSource {
+        get {
+            yield return ("*", PathsWithBlankSource("file.json", "file.txt", "file", "apple.txt"), 
+                PathsWithBlankSource("file.json", "file.txt", "file", "apple.txt"));
+            
+            yield return ("*.*", PathsWithBlankSource("file.json", "file.txt", "apple.txt"), 
+                PathsWithBlankSource("file.json", "file.txt", "apple.txt"));
+            
+            yield return ("*.txt",PathsWithBlankSource("file.json", "file.txt", "file", "apple.txt"), 
+                PathsWithBlankSource("file.txt", "apple.txt"));
+            
+            yield return ("file.*", PathsWithBlankSource("file.json", "file.txt", "file", "apple.txt"), 
+                PathsWithBlankSource("file.json", "file.txt"));
+        }
+    }
     
 }

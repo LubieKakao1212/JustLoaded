@@ -1,6 +1,7 @@
 using System.Text;
 using JustLoaded.Util.Extensions;
 using JustLoaded.Content;
+using PathLib;
 
 namespace JustLoaded.Filesystem;
 
@@ -26,7 +27,7 @@ public class VirtualFilesystem : IFilesystem {
         this._illegalCharacters = illegalCharacters;
     }
     
-    public void AddFile(string filePath, byte[] data) {
+    public void AddFile(IPurePath filePath, byte[] data) {
         CallForPath(filePath, true,
             (system, file) => {
                 system._files.Add(file, data);
@@ -34,13 +35,12 @@ public class VirtualFilesystem : IFilesystem {
             });
     }
 
-    public void AddFile(string filePath, string content) {
+    public void AddFile(IPurePath filePath, string content) {
         AddFile(filePath, Encoding.ASCII.GetBytes(content));
     }
     
-    public Stream? OpenFile(string filePath) {
-        filePath = filePath.CollapseAbsoluteFilePath();
-        return CallForPath(filePath, false,
+    public Stream? OpenFile(ModAssetPath filePath) {
+        return CallForPath(filePath.path, false,
             (system, file) => {
                 if (!system._files.TryGetValue(file, out var content)) {
                     throw new FileNotFoundException();
@@ -50,9 +50,11 @@ public class VirtualFilesystem : IFilesystem {
             });
     }
 
-    public IEnumerable<ContentKey> ListFiles(string path, string pattern = "*", bool recursive = false) {
-        path = path.CollapseAbsolutePath();
-        return CallForPath(path, false,
+    public IEnumerable<ModAssetPath> ListFiles(ModAssetPath path, string pattern = "*", bool recursive = false) {
+        var purePath = CutDot(path.path);
+        
+        var stringPath = purePath.ToPosix();
+        return CallForPath(purePath, false,
             (system, file) => {
                 if (file != "") {
                     if (!system._directories.TryGetValue(file, out var s)) {
@@ -61,23 +63,23 @@ public class VirtualFilesystem : IFilesystem {
                     system = s;
                 }
                 
-                var list = new List<string>();
+                var list = new List<IPurePath>();
 
-                list.AddRange(system._files.Keys.Select((f) => CombinePath(path, f)));
+                list.AddRange(system._files.Keys.Select((f) => new PurePosixPath(stringPath, f)));
                 
                 if (recursive) {
                     foreach (var directory in system._directories) {
-                        list.AddRange(directory.Value.ListFiles("/", pattern, recursive).Select((key) => CombinePath(CombinePath(path, directory.Key), key.path)));
+                        list.AddRange(directory.Value.ListFiles(new ModAssetPath("", new PurePosixPath("")), pattern, recursive).Select(p => path.path.Join(directory.Key.AsPath(), p.path)));
                     }
                 }
 
-                return list.Where((str) => str.MatchPattern(pattern)).Select((str) => new ContentKey("", str));
+                return list.Where(p => p.Filename.MatchPattern(pattern)).Select(p => new ModAssetPath("", p));
             });
     }
-
-    public IEnumerable<ContentKey> ListPaths(string path) {
-        path = path.CollapseAbsolutePath();
-        return CallForPath(path, false,
+    
+    public IEnumerable<ModAssetPath> ListPaths(ModAssetPath path) {
+        var purePath = CutDot(path.path);
+        return CallForPath(purePath, false,
             (system, file) => {
                 if (file != "") {
                     if (!system._directories.TryGetValue(file, out var s)) {
@@ -85,62 +87,74 @@ public class VirtualFilesystem : IFilesystem {
                     }
                     system = s;
                 }
-                return system._directories.Keys.Select((str) => new ContentKey("", CombinePath(path, str)));
+                return system._directories.Keys.Select(str => new ModAssetPath("", purePath.Join(str)));
             });
     }
 
-    private T CallForPath<T>(String path, bool createDirs, Func<VirtualFilesystem, string, T> action) {
-        if (path.IndexOfAny(_illegalCharacters) >= 0) {
+    private T CallForPath<T>(IPurePath path, bool createDirs, Func<VirtualFilesystem, string, T> action) {
+        path = path.CollapseAbsolutePath();
+        var stringPath = path.ToPosix();
+        if (stringPath.IndexOfAny(_illegalCharacters) >= 0) {
             throw new ArgumentException("Path contains invalid characters");
         }
-        var i = path.IndexOf('/');
-        
-        //Skip '/' if its the first character-
-        if (i == 0) {
-            path = path.Substring(1);
-            i = path.IndexOf('/');
+
+        var parts = new List<String>(path.Parts);
+
+        if (parts[0].Equals(".")) {
+            if (parts.Count == 1) {
+                return action(this, "");
+            }
+            parts.RemoveAt(0);
         }
         
-        if (i < 0) {
-            return action(this, path);
+        if (!path.HasComponents(PathComponent.Dirname)) {
+            return action(this, path.Filename);
         }
         else {
-            var p = path.Substring(0, i);
-            if (_files.ContainsKey(p)) {
+            var first = parts[0];
+            if (_files.ContainsKey(first)) {
                 throw new DirectoryNotFoundException("not a directory");
             }
-
             VirtualFilesystem vfs;
             
             if (createDirs) {
-                vfs = _directories.GetValueOrSetDefaultLazy(p, () => new VirtualFilesystem(_illegalCharacters));
+                vfs = _directories.GetValueOrSetDefaultLazy(first, () => new VirtualFilesystem(_illegalCharacters));
             }
-            else if (_directories.TryGetValue(p, out var fs)) {
+            else if (_directories.TryGetValue(first, out var fs)) {
                 vfs = fs;
             }
             else {
-                throw new DirectoryNotFoundException("Not such file or directory:");
+                throw new DirectoryNotFoundException($"Not such file or directory: {path.ToPosix()}");
             }
             
-            return vfs.CallForPath<T>(path.Substring(i + 1), createDirs, action);
+            return vfs.CallForPath<T>(new PurePosixPath(parts.Skip(1).ToArray()), createDirs, action);
         }
     }
 
-    private string CombinePath(string path, string secondPath) {
-        var s = 0;
-        var l = path.Length;
-        if (path != "" && path[^1] == '/') {
-            path = path.Substring(s, --l);
+    private IPurePath CutDot(IPurePath purePath) {
+        var p = purePath.Parts.ToArray();
+        if (p.Length > 1 && p[0] == ".") {
+            purePath = purePath.RelativeTo(PathExtensions.LOCAL);
         }
 
-        if (path != "" && path[0] == '/') {
-            path = path.Substring(++s, --l);
-        }
-        
-        if (path == "") {
-            return secondPath;
-        }
-        return path + "/" + secondPath;
+        return purePath;
     }
+    
+    // private string CombinePath(string path, string secondPath) {
+    //     var s = 0;
+    //     var l = path.Length;
+    //     if (path != "" && path[^1] == '/') {
+    //         path = path.Substring(s, --l);
+    //     }
+    //
+    //     if (path != "" && path[0] == '/') {
+    //         path = path.Substring(++s, --l);
+    //     }
+    //     
+    //     if (path == "") {
+    //         return secondPath;
+    //     }
+    //     return path + "/" + secondPath;
+    // }
     
 }

@@ -1,4 +1,7 @@
+using System.Diagnostics;
 using JustLoaded.Content;
+using JustLoaded.Util.Validation;
+using PathLib;
 
 namespace JustLoaded.Filesystem;
 
@@ -8,47 +11,32 @@ public class RelativeFilesystem : IFilesystem {
     public bool HandlesSource => _nestedFilesystem.HandlesSource;
     
     private readonly IFilesystem _nestedFilesystem;
-    private readonly string _pathPrefix;
+    private readonly IPurePath _prefixPath;
     
-    public RelativeFilesystem(IFilesystem nested, string pathPrefix) {
+    public RelativeFilesystem(IFilesystem nested, IPurePath prefixPath) {
         _nestedFilesystem = nested;
-        _pathPrefix = pathPrefix;
-
-        if (_pathPrefix.EndsWith('/')) {
-            _pathPrefix = _pathPrefix.Substring(0, _pathPrefix.Length);
-        }
-    }
-
-    Stream? IFilesystem.OpenFile(string path) {
-        return _nestedFilesystem.OpenFile(TransformPath(path));
+        _prefixPath = prefixPath;
+        prefixPath.Matches(path => !path.IsAbsolute());
     }
     
-    public Stream? OpenFile(ContentKey path) {
+    public Stream? OpenFile(ModAssetPath path) {
         return _nestedFilesystem.OpenFile(TransformKey(path));
     }
 
-    public IEnumerable<ContentKey> ListFiles(string path, string pattern = "*", bool recursive = false) {
-        return _nestedFilesystem.ListFiles(TransformPath(path), pattern, recursive);
-    }
-
-    public IEnumerable<ContentKey> ListFiles(ContentKey path, string pattern = "*", bool recursive = false) {
+    public IEnumerable<ModAssetPath> ListFiles(ModAssetPath path, string pattern = "*", bool recursive = false) {
         return _nestedFilesystem.ListFiles(TransformKey(path), pattern, recursive);
     }
 
-    public IEnumerable<ContentKey> ListPaths(string path) {
-        return _nestedFilesystem.ListPaths(TransformPath(path));
-    }
-
-    public IEnumerable<ContentKey> ListPaths(ContentKey path) {
+    public IEnumerable<ModAssetPath> ListPaths(ModAssetPath path) {
         return _nestedFilesystem.ListPaths(TransformKey(path));
     }
 
-    private string TransformPath(string path) {
-        return _pathPrefix + '/' + path;
+    private IPurePath TransformPath(IPurePath path) {
+        return _prefixPath.Join(path);
     }
 
-    private ContentKey TransformKey(in ContentKey key) {
-        return new ContentKey(key.source, TransformPath(key.path));
+    private ModAssetPath TransformKey(in ModAssetPath key) {
+        return new ModAssetPath(key.modSelector, TransformPath(key.path));
     }
     
 }

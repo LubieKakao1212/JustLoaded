@@ -1,6 +1,8 @@
 using System.Collections;
+using System.Xml.XPath;
 using JustLoaded.Content;
 using JustLoaded.Filesystem;
+using PathLib;
 
 namespace JustLoaded.FileSystem.Tests;
 
@@ -11,6 +13,8 @@ public abstract class FilesystemTester<TFilesystem, TSource> where TSource : IFi
     
     protected static IEnumerable SourceListDirs => new TSource().SourceListDirs;
     protected static IEnumerable SourceListFilesShallow => new TSource().SourceListFilesShallow;
+    protected static IEnumerable SourceListFilesRecursive => new TSource().SourceListFilesRecursive;
+    protected static IEnumerable SourceListFilesPattern => new TSource().SourceListFilesPattern;
     
 
     protected TFilesystem fs;
@@ -21,12 +25,12 @@ public abstract class FilesystemTester<TFilesystem, TSource> where TSource : IFi
     }
     
     [TestCaseSource(nameof(SourceSingleFileFlat))]
-    public void GetSingleFile(string fileName) {
+    public void GetSingleFile(ModAssetPath fileName) {
         var fileContent = "A Cool File Content";
         
         MakeFile(fileName, fileContent);
         
-        using var stream = fs.OpenFile(new ContentKey("", fileName));
+        using var stream = fs.OpenFile(fileName);
         Assert.That(stream, Is.Not.Null);
         
         using var text = new StreamReader(stream);
@@ -34,7 +38,7 @@ public abstract class FilesystemTester<TFilesystem, TSource> where TSource : IFi
     }
     
     [TestCaseSource(nameof(SourceMultipleFilesFlat))]
-    public void AddGetMultiple(IEnumerable<string> fileNames) {
+    public void AddGetMultiple(IEnumerable<ModAssetPath> fileNames) {
         var files = fileNames.ToArray();
         
         for (int i = 0; i < files.Length; i++) {
@@ -42,17 +46,17 @@ public abstract class FilesystemTester<TFilesystem, TSource> where TSource : IFi
         }
         
         for (int i = 0; i < files.Length; i++) {
-            AssertFileContents(fs, new ContentKey("", files[i]), i.ToString());
+            AssertFileContents(fs, files[i], i.ToString());
         }
     }
     
     [TestCaseSource(nameof(SourceListDirs))]
-    public void ListPaths(string listDir, string[] files, ContentKey[] expectedDirs) {
+    public void ListPaths(ModAssetPath listDir, ModAssetPath[] files, ModAssetPath[] expectedDirs) {
         foreach (var file in files) {
-            MakeFile(file, file);
+            MakeFile(file, file.ToString());
         }
 
-        var dirsSet = new HashSet<ContentKey>(expectedDirs);
+        var dirsSet = new HashSet<ModAssetPath>(expectedDirs);
         foreach (var dir in fs.ListPaths(listDir)) {
             Assert.That(dirsSet, Contains.Item(dir));
             dirsSet.Remove(dir);
@@ -62,27 +66,39 @@ public abstract class FilesystemTester<TFilesystem, TSource> where TSource : IFi
     }
     
     [TestCaseSource(nameof(SourceListFilesShallow))]
-    public void ListFilesShallow(string listDir, string[] files, ContentKey[] expectedFiles) {
+    public void ListFilesShallow(ModAssetPath listDir, ModAssetPath[] files, ModAssetPath[] expectedFiles) {
         DoListFiles(listDir, files, expectedFiles, "*", false);
+    }
+
+    [TestCaseSource(nameof(SourceListFilesRecursive))]
+    public void ListFilesRecursive(ModAssetPath listDir, ModAssetPath[] files, ModAssetPath[] expectedFiles) {
+        DoListFiles(listDir, files, expectedFiles, "*", true);
+    }
+    
+    [TestCaseSource(nameof(SourceListFilesPattern))]
+    public void ListFilesPattern(string pattern, ModAssetPath[] files, ModAssetPath[] expectedFiles) {
+        DoListFiles(ModAssetPath.Empty, files, expectedFiles, pattern, false);
     }
     
     protected abstract TFilesystem SetupFilesystem();
-    protected abstract void MakeFile(string fileName, string content);
     
+    protected abstract void MakeFile(ModAssetPath fileName, string content);
     
-    protected void DoListFiles(string listDir, string[] files, ContentKey[] expectedFiles, string pattern, bool recursive) {
+    protected void DoListFiles(ModAssetPath listDir, ModAssetPath[] files, ModAssetPath[] expectedFiles, string pattern, bool recursive) {
         foreach (var file in files) {
-            MakeFile(file, file);
+            MakeFile(file, file.ToString());
         }
         
-        var dirsSet = new HashSet<ContentKey>(expectedFiles);
+        var dirsSet = new HashSet<ModAssetPath>(expectedFiles);
         foreach (var dir in fs.ListFiles(listDir, pattern, recursive)) {
             Assert.That(dirsSet, Contains.Item(dir));
+            
             dirsSet.Remove(dir);
         }
         Assert.That(dirsSet, Is.Empty);
     }
-    protected void AssertFileContents(TFilesystem vfs, ContentKey file, string expectedContent) {
+    
+    protected void AssertFileContents(TFilesystem vfs, ModAssetPath file, string expectedContent) {
         using var stream1 = vfs.OpenFile(file);
         Assert.That(stream1, Is.Not.Null);
         using var text = new StreamReader(stream1);

@@ -7,7 +7,7 @@ public static class FileHelper {
     public static void CreateFile(string fileName, string content) {
         var filePath = Path.Combine(ResourcesPath, fileName);
         var directory = Path.GetDirectoryName(filePath);
-        Assert.That(directory, Is.Not.Null, () => "Test int failed, invalid file path");
+        Assert.That(directory, Is.Not.Null, () => "Test init failed, invalid file path");
         Directory.CreateDirectory(directory);
         File.WriteAllText(filePath, content);
     }

@@ -1,7 +1,52 @@
+using JustLoaded.Util.Validation;
+using PathLib;
+
 namespace JustLoaded.Filesystem;
 
 public static class FilesystemUtil {
-    public static string CollapsePath(this string path) {
+
+    public static IPurePath CollapsePath(this IPurePath path) {
+        //TODO
+        //path.Matches(purePath => !purePath.IsAbsolute(), () => new ());
+        path = path.Relative();
+        
+        var parts = new List<string>(path.Parts);
+        var stack = new Stack<string>(parts.Count);
+        
+        var upCount = 0;
+
+        foreach (var part in parts) {
+            if (part.Equals("..")) {
+                if (!stack.TryPop(out _)) {
+                    upCount++;
+                }
+            }
+            else {
+                stack.Push(part);
+            }
+        }
+        
+        if (!stack.TryPop(out var first)) {
+            switch (upCount) {
+                case 0:
+                    return new PurePosixPath("");
+                case 1:
+                    return new PurePosixPath("..");
+                default:
+                    return new PurePosixPath(Enumerable.Repeat("..", upCount - 1).MergePathsReverse(".."));
+            }
+        }
+        
+        return new PurePosixPath(stack.Concat(Enumerable.Repeat("..", upCount)).MergePathsReverse(first));
+    }
+
+    public static IPurePath CollapseAbsolutePath(this IPurePath path) {
+        path = path.CollapsePath();
+        path.Dirname.StartsWith("..").Matches(b => !b, () => new DirectoryNotFoundException());
+        return path;
+    }
+    
+    /*public static string CollapsePath(this string path) {
         if (path == ".") {
             return "";
         }
@@ -56,7 +101,7 @@ public static class FilesystemUtil {
         }
 
         return CollapseAbsolutePath(filePath);
-    }
+    }*/
     
     public static string MergePathsReverse(this IEnumerable<string> elements, string first) {
         return elements.Aggregate(first, (acc, str) => str + '/' + acc);
@@ -73,9 +118,5 @@ public static class FilesystemUtil {
             str = str.Substring(location + segment.Length);
         }
         return true;
-    }
-
-    public static string GetRelativePath(this string path, string relativeTo) {
-        throw new NotImplementedException("TODO");
     }
 }

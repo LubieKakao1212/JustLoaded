@@ -9,22 +9,12 @@ public interface IFilesystem {
 
     public bool HandlesSource { get; }
 
-    protected internal Stream? OpenFile(string path);
+    public Stream? OpenFile(ModAssetPath path);
 
-    public Stream? OpenFile(ContentKey path) {
-        return OpenFile(path.path);
-    }
+    public IEnumerable<ModAssetPath> ListFiles(ModAssetPath path, string pattern = "*", bool recursive = false);
 
-    public IEnumerable<ContentKey> ListFiles(string path, string pattern = "*", bool recursive = false);
-    public IEnumerable<ContentKey> ListFiles(ContentKey path, string pattern = "*", bool recursive = false) {
-        return ListFiles(path.path, pattern, recursive);
-    }
+    public IEnumerable<ModAssetPath> ListPaths(ModAssetPath path);
     
-    public IEnumerable<ContentKey> ListPaths(string path);
-    public IEnumerable<ContentKey> ListPaths(ContentKey path) {
-        return ListPaths(path.path);
-    }
-
     public static void HandleSourceHandlingWarning(IFilesystem filesystem) {
         if (filesystem.HandlesSource) {
             //TODO use Logger (Warning)

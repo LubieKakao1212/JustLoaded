@@ -9,4 +9,8 @@
       <ProjectReference Include="..\JustLoaded.Util\JustLoaded.Util.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="PathLib" Version="0.9.8" />
+    </ItemGroup>
+
 </Project>
