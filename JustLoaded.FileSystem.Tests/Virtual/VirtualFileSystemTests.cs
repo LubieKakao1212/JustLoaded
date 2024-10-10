@@ -1,7 +1,6 @@
 using JustLoaded.Filesystem;
-using PathLib;
 
-namespace JustLoaded.FileSystem.Tests;
+namespace JustLoaded.FileSystem.Tests.Virtual;
 
 public class VirtualFilesystemTests : FilesystemTester<VirtualFilesystem, FilesystemTestSource> {
 

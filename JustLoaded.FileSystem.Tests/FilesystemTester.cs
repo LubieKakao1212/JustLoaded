@@ -25,7 +25,7 @@ public abstract class FilesystemTester<TFilesystem, TSource> where TSource : IFi
     }
     
     [TestCaseSource(nameof(SourceSingleFileFlat))]
-    public void GetSingleFile(ModAssetPath fileName) {
+    public virtual void GetSingleFile(ModAssetPath fileName) {
         var fileContent = "A Cool File Content";
         
         MakeFile(fileName, fileContent);
@@ -38,7 +38,7 @@ public abstract class FilesystemTester<TFilesystem, TSource> where TSource : IFi
     }
     
     [TestCaseSource(nameof(SourceMultipleFilesFlat))]
-    public void AddGetMultiple(IEnumerable<ModAssetPath> fileNames) {
+    public virtual void AddGetMultiple(IEnumerable<ModAssetPath> fileNames) {
         var files = fileNames.ToArray();
         
         for (int i = 0; i < files.Length; i++) {

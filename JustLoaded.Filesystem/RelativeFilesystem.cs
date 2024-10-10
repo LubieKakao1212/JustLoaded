@@ -5,7 +5,6 @@ using PathLib;
 
 namespace JustLoaded.Filesystem;
 
-[Obsolete("Experimental")]
 public class RelativeFilesystem : IFilesystem {
 
     public bool HandlesSource => _nestedFilesystem.HandlesSource;
