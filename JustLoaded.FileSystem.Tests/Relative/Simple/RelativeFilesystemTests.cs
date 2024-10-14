@@ -2,6 +2,7 @@ using JustLoaded.Filesystem;
 
 namespace JustLoaded.FileSystem.Tests.Relative.Simple;
 
+//TODO Write RelativeFilesystem test cases for both simple and combined
 public class SimpleRelativeFilesystemTests : RelativeFilesystemTester<Source> {
 
     private VirtualFilesystem vfs;
@@ -20,23 +21,31 @@ public class Source : RelativeFilesystemTestSourceBase {
 
     public override IEnumerable<(ModAssetPath file, ModAssetPath query)> GetSingleFileRelativeSource {
         get {
-            
+            yield break;
         }
     }
 
     public override IEnumerable<(ModAssetPath query, ModAssetPath[] files, ModAssetPath[] results)> GetListDirsSource {
-        get;
+        get {
+            yield break;
+        }
     }
 
     public override IEnumerable<(ModAssetPath query, ModAssetPath[] files, ModAssetPath[] results)> GetListFilesShallowSource {
-        get;
+        get {
+            yield break;
+        }
     }
 
     public override IEnumerable<(ModAssetPath query, ModAssetPath[] files, ModAssetPath[] results)> GetListFilesRecursiveSource {
-        get;
+        get {
+            yield break;
+        }
     }
 
     public override IEnumerable<(string pattern, ModAssetPath[] files, ModAssetPath[] results)> GetListFilesPatternSource {
-        get;
+        get {
+            yield break;
+        }
     }
 }
