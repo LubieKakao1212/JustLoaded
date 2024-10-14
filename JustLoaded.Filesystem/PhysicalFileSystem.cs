@@ -1,64 +1,39 @@
 using JustLoaded.Content;
+using PathLib;
 
 namespace JustLoaded.Filesystem;
 
 public class PhysicalFilesystem : IFilesystem {
 
     public bool HandlesSource => false;
-
-    public string Root { get; private set; }
+    public IPath Root { get; }
     
-    public PhysicalFilesystem(string root) {
-        this.Root = Path.GetFullPath(root);
+    public PhysicalFilesystem(IPurePath root) {
+        Root = new PosixPath(root.ToPosix());
     }
+
+    public Stream? OpenFile(ModAssetPath path) {
+        var concretePath = ApplyPath(path.path);
+        return concretePath.Open(FileMode.Open);
+    }
+
+    public IEnumerable<ModAssetPath> ListFiles(ModAssetPath path, string pattern = "*", bool recursive = false) {
+        var concretePath = ApplyPath(path.path);
+        return concretePath.ListDir(recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)
+            .Where(path1 => path1.IsFile())
+            .Where(path1 => path1.Filename.MatchPattern(pattern))
+            .Select(path1 => new ModAssetPath("", path1.RelativeTo(Root)));
+    }
+
+    public IEnumerable<ModAssetPath> ListPaths(ModAssetPath path) {
+        var concretePath = ApplyPath(path.path);
+        return concretePath.ListDir(SearchOption.TopDirectoryOnly)
+            .Where(path1 => path1.IsDir())
+            .Select(path1 => new ModAssetPath("", path1.RelativeTo(Root)));
+    }
+
     
-    Stream? IFilesystem.OpenFile(string path) {
-        try {
-            return File.OpenRead(ApplyPath(path));
-        }
-        catch (DirectoryNotFoundException e) {
-            //TODO use Logger
-            Console.WriteLine(e);
-        }
-        catch (FileNotFoundException e) {
-            //TODO use Logger
-            Console.WriteLine(e);
-        }
-
-        return null;
+    private IPath ApplyPath(IPurePath path) {
+        return Root.Join(path.CollapseAbsolutePath());
     }
-
-    public IEnumerable<ContentKey> ListFiles(string path, string pattern = "*", bool recursive = false) {
-        try {
-            return Directory.EnumerateFiles(ApplyPath(Root), pattern, recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly).Select((p) => new ContentKey("", GetStandardPath(p)));
-        }
-        catch (DirectoryNotFoundException e) {
-            //TODO use Logger
-            Console.WriteLine(e);
-        }
-
-        return Enumerable.Empty<ContentKey>();
-    }
-
-    public IEnumerable<ContentKey> ListPaths(string path) {
-        try {
-            return Directory.EnumerateDirectories(ApplyPath(path), "*").Select((p) => new ContentKey("", GetStandardPath(p)));
-        }
-        catch (DirectoryNotFoundException e) {
-            //TODO use Logger
-            Console.WriteLine(e);
-        }
-
-        return Enumerable.Empty<ContentKey>();
-    }
-
-    private string ApplyPath(string path) {
-        return Path.Combine(Root, path);
-    }
-
-    private string GetStandardPath(string path) {
-        return Path.GetRelativePath(Root, path).Replace('\\', '/');
-    }
-    
-    
 }

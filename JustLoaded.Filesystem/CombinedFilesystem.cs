@@ -2,57 +2,43 @@ using JustLoaded.Content;
 
 namespace JustLoaded.Filesystem;
 
-[Obsolete("Experimental)")]
 public class CombinedFilesystem : IFilesystem {
     
     public bool HandlesSource => true;
 
-    private Dictionary<string, IFilesystem> _fileSystems = new();
+    private readonly Dictionary<string, IFilesystem> _fileSystems = new();
 
     public void AddFileSystem(string name, IFilesystem filesystem) {
         _fileSystems.Add(name, filesystem);
     }
     
-    Stream? IFilesystem.OpenFile(string path) {
-        foreach (var fs in _fileSystems.Values) {
-            var file = fs.OpenFile(path);
+    Stream? IFilesystem.OpenFile(ModAssetPath path) {
+        foreach (var fs in MatchModId(path.modSelector)) {
+            var file = fs.Value.OpenFile(path);
             if (file != null) {
                 return file;
-            }
+            }    
         }
-
         return null;
     }
 
-    public Stream? OpenFile(ContentKey path) {
-        var fs = _fileSystems[path.source];
-        return fs.OpenFile(path);
-    }
-
-    public IEnumerable<ContentKey> ListFiles(string path, string pattern = "*", bool recursive = false) {
-        foreach (var fs in _fileSystems) {
+    public IEnumerable<ModAssetPath> ListFiles(ModAssetPath path, string pattern = "*", bool recursive = false) {
+        foreach (var fs in MatchModId(path.modSelector)) {
             foreach (var file in fs.Value.ListFiles(path, pattern, recursive)) {
-                yield return new ContentKey(fs.Key, file.path);
+                yield return new ModAssetPath(fs.Key, file.path);
             }
         }
     }
-
-    public IEnumerable<ContentKey> ListFiles(ContentKey path, string pattern = "*", bool recursive = false) {
-        var fs = _fileSystems[path.source];
-        return fs.ListFiles(path, pattern, recursive).Select((key) => new ContentKey(path.source, key.path));
-    }
-
-    public IEnumerable<ContentKey> ListPaths(string path) {
-        foreach (var fs in _fileSystems) {
+    
+    public IEnumerable<ModAssetPath> ListPaths(ModAssetPath path) {
+        foreach (var fs in MatchModId(path.modSelector)) {
             foreach (var pathOut in fs.Value.ListPaths(path)) {
-                yield return new ContentKey(fs.Key, pathOut.path);
+                yield return new ModAssetPath(fs.Key, pathOut.path);
             }
         }
     }
-    
-    public IEnumerable<ContentKey> ListPaths(ContentKey path) {
-        var fs = _fileSystems[path.source];
-        return fs.ListPaths(path).Select((key) => new ContentKey(path.source, key.path));
+
+    public IEnumerable<KeyValuePair<string, IFilesystem>> MatchModId(string modId) {
+        return _fileSystems.Where(pair => pair.Key.MatchPattern(modId));
     }
-    
 }

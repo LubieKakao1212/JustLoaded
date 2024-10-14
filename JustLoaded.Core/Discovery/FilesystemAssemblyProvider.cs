@@ -12,7 +12,7 @@ public class FilesystemAssemblyProvider : IAssemblyProvider {
     }
     
     public IEnumerable<Assembly> GetAssemblies() {
-        foreach (var file in _filesystem.ListFiles("", "*.dll")) {
+        foreach (var file in _filesystem.ListFiles("".AsPath().FromAnyMod(), "*.dll")) {
             using var stream = _filesystem.OpenFile(file);
             using var memStream = new MemoryStream();
             stream!.CopyTo(memStream);
