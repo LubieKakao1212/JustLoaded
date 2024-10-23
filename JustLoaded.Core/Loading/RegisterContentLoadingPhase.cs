@@ -59,6 +59,7 @@ public class RegisterContentLoadingPhase : ILoadingPhase {
                             }
 
                             var register = _genericRegister!.MakeGenericMethod(contentType);
+                            
                             var result = (bool) register.Invoke(db, new[] { key, value })!;
                             if (!result) {
                                 //TODO use logger (warning)

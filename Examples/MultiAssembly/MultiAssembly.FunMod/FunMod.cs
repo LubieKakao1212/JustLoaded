@@ -21,7 +21,7 @@ public class FunModInitializer : IModInitializer {
         var gatherContent = new ContentKey(FunMod.ModId, "gather-content");
         phases.New(printMods, new ListModsLoadingPhase())
             .Register();
-        phases.New(registerDb, new DefaultDatabaseRegistrationEntrypointLoadingPhase())
+        phases.New(registerDb, new DatabaseRegistrationLoadingPhase())
             .WithOrder(printMods, Order.After)
             .Register();
         phases.New(gatherContent, new RegisterContentLoadingPhase())
