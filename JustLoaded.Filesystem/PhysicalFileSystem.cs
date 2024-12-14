@@ -4,12 +4,22 @@ using PathLib;
 
 namespace JustLoaded.Filesystem;
 
+/// <summary>
+/// Issue: Does NOT work with absolute paths
+/// </summary>
 public class PhysicalFilesystem : IFilesystem {
     
     public bool HandlesSource => false;
     public IPath Root { get; }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="root">Issue: MUST be a relative path</param>
     public PhysicalFilesystem(IPurePath root) {
+        // if (root.IsAbsolute()) {
+        //     root = root.RelativeTo(PathExtensions.CurrentDirectory);
+        // }
         Root = new PosixPath(root.ToPosix());
     }
 
