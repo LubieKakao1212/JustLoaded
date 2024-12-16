@@ -25,6 +25,13 @@ public class PhysicalFilesystem : IFilesystem {
 
     public Stream? OpenFile(ModAssetPath path) {
         var concretePath = ApplyPath(path.path);
+        if (concretePath.IsDir()) {
+            Console.WriteLine("Requested file is a directory");
+            return null;
+        }
+        if (!concretePath.IsFile()) {
+            return null;
+        }
         return concretePath.Open(FileMode.Open);
     }
 
@@ -42,7 +49,6 @@ public class PhysicalFilesystem : IFilesystem {
             .Where(path1 => path1.IsDir())
             .Select(path1 => new ModAssetPath("", RestorePath(path1)));
     }
-
     
     private IPath ApplyPath(IPurePath path) {
         return Root.Join(path.CollapseAbsolutePath());
