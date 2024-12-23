@@ -6,7 +6,7 @@ using MultiAssembly.Game;
 
 Console.WriteLine("Hello, World!");
 
-var fs = new PhysicalFilesystem("mods".AsPath());
+var fs = new RelativeFilesystem(new PhysicalFilesystem(PathExtensions.Local), "mods".AsPath());
 
 var ml = new ModLoaderSystem.Builder(
     new AssemblyModProvider(

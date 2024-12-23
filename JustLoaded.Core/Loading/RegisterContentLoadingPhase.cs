@@ -16,7 +16,7 @@ public class RegisterContentLoadingPhase : ILoadingPhase {
         var mods = (IContentDatabase<Mod>?) masterDb.GetByContentType<Mod>();
         
         //I don't like this code
-        foreach (var modEntry in mods!.ContentEntries) {
+        foreach (var modEntry in mods!.ContentEntries.Reverse() /*Reversing the order so mods which are last have most priority in filling the databases*/) {
             var modId = ModMetadata.ToModId(modEntry.Key);
             var mod = modEntry.Value;
             

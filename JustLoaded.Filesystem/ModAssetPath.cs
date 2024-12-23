@@ -42,3 +42,15 @@ public class ModAssetPath : IEquatable<ModAssetPath> {
         return $"{modSelector}:{path.ToPosix()}";
     }
 }
+
+public static class ModAssetPathExtensions {
+
+    public static ModAssetPath RelativeTo(this ModAssetPath asset, IPurePath relativeTo) {
+        return asset.path.RelativeToFixed(relativeTo).FromMod(asset.modSelector);
+    }
+
+    public static Func<ModAssetPath, ModAssetPath> RelativeToSelect(IPurePath relativeTo) {
+        return asset => asset.RelativeTo(relativeTo);
+    }
+    
+}

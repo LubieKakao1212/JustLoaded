@@ -63,4 +63,18 @@ public class FilesystemUtilTests {
         }*/
     }
 
+    [TestCase("path1", "path1", "")]
+    [TestCase("path1/path2", "path1", "path2")]
+    [TestCase("path1/path2", "path3", "../path1/path2")]
+    [TestCase("path1/path2", "path1/path3", "../path2")]
+    [TestCase("path1/path2", "", "path1/path2")]
+    [TestCase("./path1", "", "path1")]
+    public void RelativeToFixedTest(string pBase, string pRelativeTo, string result) {
+        var pathBase = pBase.AsPath();
+        var pathRelativeTo = pRelativeTo.AsPath();
+
+        var relative = pathBase.RelativeToFixed(pathRelativeTo);
+        
+        Assert.That(relative.ToPosix(), Is.EqualTo(result.AsPath().ToPosix()));
+    }
 }

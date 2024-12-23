@@ -37,6 +37,10 @@ public class PhysicalFilesystem : IFilesystem {
 
     public IEnumerable<ModAssetPath> ListFiles(ModAssetPath path, string pattern = "*", bool recursive = false) {
         var concretePath = ApplyPath(path.path);
+        if(!concretePath.IsDir()) {
+            return Enumerable.Empty<ModAssetPath>();
+        }
+        
         return concretePath.ListDir(recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)
             .Where(path1 => path1.IsFile())
             .Where(path1 => path1.Filename.MatchPattern(pattern))
@@ -45,6 +49,10 @@ public class PhysicalFilesystem : IFilesystem {
 
     public IEnumerable<ModAssetPath> ListPaths(ModAssetPath path) {
         var concretePath = ApplyPath(path.path);
+        if(!concretePath.IsDir()) {
+            return Enumerable.Empty<ModAssetPath>();
+        }
+        
         return concretePath.ListDir(SearchOption.TopDirectoryOnly)
             .Where(path1 => path1.IsDir())
             .Select(path1 => new ModAssetPath("", RestorePath(path1)));
@@ -55,6 +63,6 @@ public class PhysicalFilesystem : IFilesystem {
     }
 
     private IPurePath RestorePath(IPath path) {
-        return path.RelativeTo(PathExtensions.CurrentDirectory).RelativeTo(Root);
+        return path.RelativeToFixed(PathExtensions.CurrentDirectory).RelativeToFixed(Root);
     }
 }

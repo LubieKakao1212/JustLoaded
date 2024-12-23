@@ -23,11 +23,13 @@ public class RelativeFilesystem : IFilesystem {
     }
 
     public IEnumerable<ModAssetPath> ListFiles(ModAssetPath path, string pattern = "*", bool recursive = false) {
-        return _nestedFilesystem.ListFiles(TransformKey(path), pattern, recursive);
+        return _nestedFilesystem.ListFiles(TransformKey(path), pattern, recursive)
+            .Select(ModAssetPathExtensions.RelativeToSelect(_prefixPath));
     }
 
     public IEnumerable<ModAssetPath> ListPaths(ModAssetPath path) {
-        return _nestedFilesystem.ListPaths(TransformKey(path));
+        return _nestedFilesystem.ListPaths(TransformKey(path))
+            .Select(ModAssetPathExtensions.RelativeToSelect(_prefixPath));
     }
 
     private IPurePath TransformPath(IPurePath path) {
