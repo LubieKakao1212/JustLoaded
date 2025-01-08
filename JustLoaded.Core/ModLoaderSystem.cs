@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using JustLoaded.Util.Extensions;
 using JustLoaded.Content;
 using JustLoaded.Content.Database;
@@ -20,6 +21,8 @@ public class ModLoaderSystem {
     private readonly ArrayDatabase<ILoadingPhase> _loadingPhases = new();
     private readonly ArrayDatabase<Mod> _mods = new();
     private readonly HashSet<Mod> _modsSet = new();
+
+    private readonly Dictionary<Type, object> _attachments = new();
     
     private ModLoaderSystem(IModProvider modProvider, IModFilter modFilter, MasterDatabase masterDb) {
         this._masterDb = masterDb;
@@ -29,6 +32,19 @@ public class ModLoaderSystem {
         this.CurrentInitPhase = InitializationPhase.Created;
     }
 
+    public ModLoaderSystem AddAttachment<T>(T attachment) where T : class {
+        _attachments.Add(typeof(T), attachment);
+        return this;
+    }
+
+    public T? GetAttachment<T>() where T : class {
+        return _attachments.GetValueOrDefault(typeof(T)) as T;
+    }
+
+    public T GetRequiredAttachment<T>() where T : class {
+        return GetAttachment<T>() ?? throw new ApplicationException($"No attachment of type {typeof(T)}");
+    }
+    
     public void DiscoverMods() {
         CurrentInitPhase.AssertBefore(InitializationPhase.DiscoveringMods);
         CurrentInitPhase = InitializationPhase.DiscoveringMods;

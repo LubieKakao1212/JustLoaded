@@ -4,16 +4,19 @@ using System.Text;
 using JustLoaded.Content;
 using JustLoaded.Content.Database;
 using JustLoaded.Core.Reflect;
+using JustLoaded.Logger;
 
 namespace JustLoaded.Core.Loading;
 
 public class RegisterContentLoadingPhase : ILoadingPhase {
 
-    private static readonly MethodInfo _genericRegister = typeof(IContentDatabase).GetMethod(nameof(IContentDatabase.AddContent))!;
+    private static readonly MethodInfo GenericRegister = typeof(IContentDatabase).GetMethod(nameof(IContentDatabase.AddContent))!;
     
     public void Load(ModLoaderSystem modLoader) {
         var masterDb = modLoader.MasterDb;
         var mods = (IContentDatabase<Mod>?) masterDb.GetByContentType<Mod>();
+
+        var logger = modLoader.GetAttachment<ILogger>();
         
         //I don't like this code
         foreach (var modEntry in mods!.ContentEntries.Reverse() /*Reversing the order so mods which are last have most priority in filling the databases*/) {
@@ -38,13 +41,11 @@ public class RegisterContentLoadingPhase : ILoadingPhase {
                             }
 
                             if (db == null) {
-                                //TODO use logger (warning)
-                                Console.Error.WriteLine($"Could not find database for automatic registration for { field }");
+                                logger?.Error($"Could not find database for automatic registration for { field }");
                                 continue;
                             }
                             if (!db.IsTypeSupported(contentType)) {
-                                //TODO use logger (warning)
-                                Console.Error.WriteLine($"Could not find database for automatic registration for { field }");
+                                logger?.Error($"Could not find database for automatic registration for { field }");
                                 continue;
                             }
                             
@@ -53,17 +54,15 @@ public class RegisterContentLoadingPhase : ILoadingPhase {
                             var key = ToKey(id, modId);
                             var value = field.GetValue(null);
                             if (value == null) {
-                                //TODO use logger (warning)
-                                Console.Error.WriteLine($"Could not register a null value from field { field }");
+                                logger?.Error($"Could not register a null value from field { field }");
                                 continue;
                             }
 
-                            var register = _genericRegister!.MakeGenericMethod(contentType);
+                            var register = GenericRegister!.MakeGenericMethod(contentType);
                             
                             var result = (bool) register.Invoke(db, new[] { key, value })!;
                             if (!result) {
-                                //TODO use logger (warning)
-                                Console.Error.WriteLine($"Could not register value from field, key { key } is already in use");
+                                logger?.Error($"Could not register value from field, key { key } is already in use");
                                 continue;
                             }
                             

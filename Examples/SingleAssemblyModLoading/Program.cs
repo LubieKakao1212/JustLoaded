@@ -2,10 +2,18 @@
 
 using JustLoaded.Core;
 using JustLoaded.Core.Discovery;
+using JustLoaded.Logger;
 
 Console.WriteLine("Hello, World!");
 
-var ml = new ModLoaderSystem.Builder(new AssemblyModProvider(new LoadedAssemblyProvider())).Build();
+using var loggerBase = new Logger(
+    new ConsoleLogModule()
+);
+
+var ml = new ModLoaderSystem.Builder(new AssemblyModProvider(new LoadedAssemblyProvider())).Build()
+    .AddAttachment<ILogger>(loggerBase);
+
+var logger = ml.GetRequiredAttachment<ILogger>();
 
 try {
     ml.DiscoverMods();
@@ -14,7 +22,7 @@ try {
     ml.Load();
 }
 catch (Exception e) {
-    Console.WriteLine(e);
+    logger.Error(e.ToString());
 }
 
-Console.WriteLine(ml.CurrentInitPhase);
+logger.Info(""+ml.CurrentInitPhase);
