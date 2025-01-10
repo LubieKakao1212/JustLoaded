@@ -21,6 +21,10 @@
 
         private readonly IReadOnlyMasterDatabase? _masterDatabase;
 
+        public DatabaseReference(in ContentKey contentId, in ContentKey? databaseId = null, IReadOnlyMasterDatabase? masterDatabase = null) 
+            : this(BoundContentKey<TContent>.Make(contentId, databaseId), masterDatabase) { }
+            
+        
         /// <param name="contentKey"></param>
         /// <param name="databaseKey">When null a default database for <typeparamref name="TContent"/> will be used</param>
         /// <param name="key"></param>
