@@ -3,7 +3,7 @@
 using JustLoaded.Logger;
 using LoggerExample;
 
-using AsyncLogger loggerAsync = new AsyncLogger(
+using AsyncLogger loggerAsync = new AsyncLogger(TimeSpan.FromSeconds(2),
     new ConsoleLogModule(),
     new StreamLogModule(File.Open("log.log", FileMode.Create, FileAccess.Write, FileShare.Read))
     );

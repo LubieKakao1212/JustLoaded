@@ -13,10 +13,13 @@ public class AsyncLogger : LoggerBase {
 
     private readonly Semaphore _semaphore = new Semaphore(0, int.MaxValue);
 
+    private readonly TimeSpan _timeout;
+    
     /// <summary>
     /// Modules used by an AsyncLogger may not be used by another ILogger
     /// </summary>
-    public AsyncLogger(params ILogModule[] modules) : base(modules) {
+    public AsyncLogger(TimeSpan semaphoreTimeout, params ILogModule[] modules) : base(modules) {
+        _timeout = semaphoreTimeout;
     }
 
     public override void Log(string message, LogLevel level, LogFilter filter) {
@@ -44,7 +47,7 @@ public class AsyncLogger : LoggerBase {
 
     private void ThreadLoop() {
         do {
-            _semaphore.WaitOne();
+            _semaphore.WaitOne(_timeout);
             _queue.TryDequeue(out var message);
             PrintMessage(message);
         } while (_thread != null);
