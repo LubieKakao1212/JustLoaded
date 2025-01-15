@@ -1,8 +1,10 @@
-using JustLoaded.Core.Reflect;
 using JustLoaded.Content;
 using JustLoaded.Content.Database;
+using JustLoaded.Core;
+using JustLoaded.Core.Loading;
+using JustLoaded.Core.Reflect;
 
-namespace JustLoaded.Core.Loading;
+namespace JustLoaded.Loading;
 
 public abstract class EntrypointLoadingPhase<TEntrypoint> : ILoadingPhase {
 

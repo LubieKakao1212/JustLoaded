@@ -2,6 +2,7 @@ using JustLoaded.Content;
 using JustLoaded.Core;
 using JustLoaded.Core.Entrypoint;
 using JustLoaded.Core.Loading;
+using JustLoaded.Loading;
 using JustLoaded.Util;
 
 namespace Test;

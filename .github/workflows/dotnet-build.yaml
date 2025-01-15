@@ -48,6 +48,9 @@ jobs:
           - JustLoaded.Core
           - JustLoaded.Filesystem
           - JustLoaded.Util
+          - JustLoaded.Logger
+          - JustLoaded.Discovery.Reflect
+          - JustLoaded.Loading
     env:
       dotnet-version: ${{ inputs.dotnet_version || '8.0.x' }}
     runs-on: ubuntu-latest
@@ -85,6 +88,9 @@ jobs:
           - JustLoaded.Core
           - JustLoaded.Filesystem
           - JustLoaded.Util
+          - JustLoaded.Logger
+          - JustLoaded.Discovery.Reflect
+          - JustLoaded.Loading
     env:
       dotnet-version: ${{ inputs.dotnet_version || '8.0.x' }}
     runs-on: ubuntu-latest

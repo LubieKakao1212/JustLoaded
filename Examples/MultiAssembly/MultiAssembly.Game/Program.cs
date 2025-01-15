@@ -1,14 +1,23 @@
 ﻿using JustLoaded.Content.Database;
 using JustLoaded.Core;
-using JustLoaded.Core.Discovery;
+using JustLoaded.Discovery.Reflect;
 using JustLoaded.Filesystem;
+using JustLoaded.Logger;
 using MultiAssembly.Game;
 
 Console.WriteLine("Hello, World!");
 
-var fs = new PhysicalFilesystem("mods".AsPath());
+var fs = new RelativeFilesystem(new PhysicalFilesystem(PathExtensions.Local), "mods".AsPath());
 
-var ml = new ModLoaderSystem.Builder(new AssemblyModProvider(new FilesystemAssemblyProvider(fs))).Build();
+using var loggerBase = new Logger(
+    new ConsoleLogModule()
+);
+
+var ml = new ModLoaderSystem.Builder(
+    new AssemblyModProvider(
+        new FilesystemAssemblyProvider(fs)
+        )
+    ).Build().AddAttachment<ILogger>(loggerBase);
 
 try {
     ml.DiscoverMods();
@@ -20,12 +29,15 @@ catch (Exception e) {
     Console.WriteLine(e);
 }
 
-Console.WriteLine(ml.CurrentInitPhase);
+var log = ml.GetRequiredAttachment<ILogger>();
+
+log.Info(""+ml.CurrentInitPhase);
 
 var items = (IContentDatabase<Item>?)ml.MasterDb.GetByContentType<Item>();
 
+
 foreach (var key in items!.ContentKeys) {
-    Console.WriteLine("Item: "+key);
+    log.Info("Item: "+key);
 }
 
 

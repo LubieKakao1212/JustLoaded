@@ -1,3 +1,5 @@
+using JustLoaded.Logger;
+
 namespace JustLoaded.Core.Discovery;
 
 public static class ModProviderExtensions {
@@ -6,8 +8,8 @@ public static class ModProviderExtensions {
         return new CombinedModProvider(modProvider, new ConstantModProvider(mods));
     }
 
-    public static IModProvider Verbose(this IModProvider modProvider) {
-        return new LoggingModProvider(modProvider);
+    public static IModProvider Verbose(this IModProvider modProvider, ILogger logger) {
+        return new LoggingModProvider(modProvider, logger);
     }
     
 }

@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\JustLoaded.Core\JustLoaded.Core.csproj" />
+      <ProjectReference Include="..\JustLoaded.Loading\JustLoaded.Loading.csproj" />
     </ItemGroup>
 
 </Project>

@@ -1,8 +1,11 @@
 using System.Reflection;
+using JustLoaded.Core;
+using JustLoaded.Core.Discovery;
 using JustLoaded.Core.Entrypoint;
 using JustLoaded.Core.Reflect;
+using JustLoaded.Util;
 
-namespace JustLoaded.Core.Discovery;
+namespace JustLoaded.Discovery.Reflect;
 
 public class AssemblyModProvider : IModProvider {
 
@@ -18,7 +21,7 @@ public class AssemblyModProvider : IModProvider {
         var mods = new List<Mod>();
         
         foreach (var assembly in assemblies) {
-            var modTypes = assembly.GetTypeByAttribute<ModAttribute>();
+            var modTypes = assembly.GetTypesByAttribute<ModAttribute>();
             foreach (var modType in modTypes) {
                 var id = modType.GetCustomAttribute<ModAttribute>()!.modId;
                 var deps = modType.GetCustomAttributes<ModRelationAttribute>();

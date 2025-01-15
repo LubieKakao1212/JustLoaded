@@ -17,4 +17,7 @@ public interface IDatabaseRegistrationContext {
     public void RegisterDatabase<TContent>(ContentKey key, IContentDatabase database,
         DBRegistrationType registrationType = DBRegistrationType.Any);
 
+    public void RegisterDatabase(ContentKey key, Type? type, IContentDatabase database,
+        DBRegistrationType registrationType = DBRegistrationType.Any);
+
 }

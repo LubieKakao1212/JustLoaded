@@ -134,7 +134,7 @@ public class VirtualFilesystem : IFilesystem {
     private IPurePath CutDot(IPurePath purePath) {
         var p = purePath.Parts.ToArray();
         if (p.Length > 1 && p[0] == ".") {
-            purePath = purePath.RelativeTo(PathExtensions.LOCAL);
+            purePath = purePath.RelativeTo(PathExtensions.Local);
         }
 
         return purePath;

@@ -3,10 +3,13 @@ using PathLib;
 
 namespace JustLoaded.FileSystem.Tests.Physical;
 
+/// <summary>
+/// TODO fix absolute paths
+/// </summary>
 public class PhysicalFileSystemTests : FilesystemTester<PhysicalFilesystem, FilesystemTestSource> {
     
     protected override PhysicalFilesystem SetupFilesystem() {
-        return new PhysicalFilesystem(new PurePosixPath(FileHelper.ResourcesPath));
+        return new PhysicalFilesystem(FileHelper.ResourcesPath);
     }
 
     protected override void MakeFile(ModAssetPath fileName, string content) {
@@ -15,6 +18,7 @@ public class PhysicalFileSystemTests : FilesystemTester<PhysicalFilesystem, File
 
     [TearDown]
     public void TearDown2() {
-        Directory.Delete(FileHelper.ResourcesPath, true);
+        var path = new PosixPath(FileHelper.ResourcesPath.ToPosix());
+        path.Delete(true);
     }
 }

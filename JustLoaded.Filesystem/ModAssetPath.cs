@@ -3,7 +3,7 @@ using PathLib;
 
 namespace JustLoaded.Filesystem;
 
-public class ModAssetPath {
+public class ModAssetPath : IEquatable<ModAssetPath> {
 
     public static readonly ModAssetPath Empty = new("*", "".AsPath());
 
@@ -26,8 +26,8 @@ public class ModAssetPath {
         return new ModAssetPath(modSelector, new PosixPath(path.ToPosix()));
     }
     
-    public bool Equals(ModAssetPath other) {
-        return modSelector == other.modSelector && path.ToPosix() == other.path.ToPosix();
+    public bool Equals(ModAssetPath? other) {
+        return other != null && modSelector == other.modSelector && path.ToPosix() == other.path.ToPosix();
     }
 
     public override bool Equals(object? obj) {
@@ -41,4 +41,16 @@ public class ModAssetPath {
     public override string ToString() {
         return $"{modSelector}:{path.ToPosix()}";
     }
+}
+
+public static class ModAssetPathExtensions {
+
+    public static ModAssetPath RelativeTo(this ModAssetPath asset, IPurePath relativeTo) {
+        return asset.path.RelativeToFixed(relativeTo).FromMod(asset.modSelector);
+    }
+
+    public static Func<ModAssetPath, ModAssetPath> RelativeToSelect(IPurePath relativeTo) {
+        return asset => asset.RelativeTo(relativeTo);
+    }
+    
 }

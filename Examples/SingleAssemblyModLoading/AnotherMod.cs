@@ -1,5 +1,6 @@
 using JustLoaded.Core;
 using JustLoaded.Core.Reflect;
+using JustLoaded.Discovery.Reflect;
 using JustLoaded.Util;
 
 namespace SingleAssemblyModLoading;

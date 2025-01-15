@@ -67,7 +67,7 @@ public class MasterDatabase : ContentDatabase<IContentDatabase>, IReadOnlyMaster
         RegisterDatabase(key, typeof(TContent), database, registrationType);
     }
     
-    private void RegisterDatabase(ContentKey key, Type? type, IContentDatabase database, DBRegistrationType registrationType = DBRegistrationType.Any)
+    public void RegisterDatabase(ContentKey key, Type? type, IContentDatabase database, DBRegistrationType registrationType = DBRegistrationType.Any)
     {
         if (type != null)
         {

@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace JustLoaded.Core.Discovery;
+namespace JustLoaded.Discovery.Reflect;
 
 public interface IAssemblyProvider {
 

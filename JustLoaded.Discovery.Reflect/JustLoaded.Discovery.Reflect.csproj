@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\JustLoaded.Content\JustLoaded.Content.csproj" />
+      <ProjectReference Include="..\JustLoaded.Core\JustLoaded.Core.csproj" />
+      <ProjectReference Include="..\JustLoaded.Filesystem\JustLoaded.Filesystem.csproj" />
+      <ProjectReference Include="..\JustLoaded.Logger\JustLoaded.Logger.csproj" />
+      <ProjectReference Include="..\JustLoaded.Util\JustLoaded.Util.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="PathLib" Version="0.9.8" />
+    </ItemGroup>
+
+</Project>
