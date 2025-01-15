@@ -1,7 +1,8 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using JustLoaded.Core;
-using JustLoaded.Core.Discovery;
+using JustLoaded.Discovery;
+using JustLoaded.Discovery.Reflect;
 using JustLoaded.Logger;
 
 Console.WriteLine("Hello, World!");

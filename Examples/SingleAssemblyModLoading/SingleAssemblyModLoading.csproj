@@ -9,6 +9,8 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\JustLoaded.Core\JustLoaded.Core.csproj" />
+      <ProjectReference Include="..\..\JustLoaded.Discovery.Reflect\JustLoaded.Discovery.Reflect.csproj" />
+      <ProjectReference Include="..\..\JustLoaded.Loading\JustLoaded.Loading.csproj" />
     </ItemGroup>
 
 </Project>

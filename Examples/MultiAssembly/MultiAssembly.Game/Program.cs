@@ -1,6 +1,6 @@
 ﻿using JustLoaded.Content.Database;
 using JustLoaded.Core;
-using JustLoaded.Core.Discovery;
+using JustLoaded.Discovery.Reflect;
 using JustLoaded.Filesystem;
 using JustLoaded.Logger;
 using MultiAssembly.Game;

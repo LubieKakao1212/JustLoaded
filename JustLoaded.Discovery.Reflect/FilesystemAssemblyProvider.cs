@@ -1,7 +1,8 @@
 using System.Reflection;
+using JustLoaded.Core.Discovery;
 using JustLoaded.Filesystem;
 
-namespace JustLoaded.Core.Discovery;
+namespace JustLoaded.Discovery.Reflect;
 
 public class FilesystemAssemblyProvider : IAssemblyProvider {
 

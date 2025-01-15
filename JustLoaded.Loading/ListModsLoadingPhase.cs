@@ -1,8 +1,10 @@
 using JustLoaded.Content;
 using JustLoaded.Content.Database;
+using JustLoaded.Core;
+using JustLoaded.Core.Loading;
 using JustLoaded.Logger;
 
-namespace JustLoaded.Core.Loading;
+namespace JustLoaded.Loading;
 
 public class ListModsLoadingPhase : ILoadingPhase {
     

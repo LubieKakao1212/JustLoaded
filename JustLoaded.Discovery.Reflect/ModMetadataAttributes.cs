@@ -1,6 +1,7 @@
+using JustLoaded.Core;
 using JustLoaded.Util;
 
-namespace JustLoaded.Core.Reflect;
+namespace JustLoaded.Discovery.Reflect;
 
 [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
 public sealed class ModAttribute : Attribute {

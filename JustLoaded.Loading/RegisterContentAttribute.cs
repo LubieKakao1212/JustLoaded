@@ -1,4 +1,4 @@
-namespace JustLoaded.Core.Reflect;
+namespace JustLoaded.Loading;
 
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
 public sealed class RegisterContentAttribute : Attribute {
