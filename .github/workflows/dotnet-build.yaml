@@ -30,9 +30,7 @@ jobs:
         id: setup-dotnet
         with:
           dotnet-version: | #${{ env.dotnet-version }}
-            8.0.x 
-            7.0.x 
-            6.0.x 
+            8.0.x
             5.0.100
       - name: Create temporary global.json
         run: |
