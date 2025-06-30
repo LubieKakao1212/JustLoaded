@@ -14,9 +14,6 @@ jobs:
       matrix:
         os: [ubuntu]
         dotnet-version: [8.0.x]
-        include:
-          - os: windows,
-            dotnet-version: 5.0.100
     runs-on: ${{ matrix.os }}-latest
     
     steps:
@@ -26,9 +23,6 @@ jobs:
         id: setup-dotnet
         with:
           dotnet-version: |
-            5.0.100
-            6.0.x
-            7.0.x
             8.0.x
 #          dotnet-version: ${{ matrix.dotnet-version }}
       - name: Create temporary global.json

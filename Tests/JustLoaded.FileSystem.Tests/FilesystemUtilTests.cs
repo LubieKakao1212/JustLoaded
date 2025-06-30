@@ -29,7 +29,7 @@ public class FilesystemUtilTests {
     [TestCase("path/../..", null, true)]
     [TestCase("path", "path", false)]
     [TestCase("path/..", ".", false)]
-    public void AbsoluteCollapsePathTest(string path, string expected, bool shouldThrow) {
+    public void AbsoluteCollapsePathTest(string path, string? expected, bool shouldThrow) {
         if (shouldThrow) {
             Assert.Throws<DirectoryNotFoundException>(() => {
                 var typedPath = new PurePosixPath(path).CollapseAbsolutePath();
@@ -48,7 +48,7 @@ public class FilesystemUtilTests {
     [TestCase("path.", null, true)]
     [TestCase("path..", null, true)]
     [TestCase("path", "path", false)]
-    public void CollapseAbsoluteFilePathTest(string path, string expected, bool shouldThrow) {
+    public void CollapseAbsoluteFilePathTest(string path, string? expected, bool shouldThrow) {
         /*if (shouldThrow) {
             Assert.Throws<FileNotFoundException>(() => {
                 var path = new PurePosixPath(path).CollapseAbsoluteFilePath();
