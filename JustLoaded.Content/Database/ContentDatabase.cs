@@ -7,6 +7,7 @@ namespace JustLoaded.Content.Database
         
         public event Action Locked = delegate { };
         public bool IsLocked { get; private set; }
+
         public event IContentDatabase.ContentAddedCallback<TContent> ContentAdded = delegate { };
 
         public virtual IEnumerable<TContent> ContentValues => content.Values;
@@ -22,6 +23,15 @@ namespace JustLoaded.Content.Database
             return content.TryAdd(key, value);
         }
 
+        public bool AddContent(ContentKey key, object value, Type type) {
+            if (type == typeof(TContent) && value is TContent value1) {
+                return AddContent(key, value1);
+            }
+            else {
+                throw new UnsupportedContentTypeException(value.GetType(), new[] { typeof(TContent) });
+            }
+        }
+        
         public virtual TContent? GetContent(ContentKey key) {
             return content.GetValueOrDefault(key);
         }

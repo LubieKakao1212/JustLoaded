@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using JustLoaded.Filesystem;
 
 namespace JustLoaded.FileSystem.Tests.Relative.Simple;
@@ -5,15 +6,17 @@ namespace JustLoaded.FileSystem.Tests.Relative.Simple;
 //TODO Write RelativeFilesystem test cases for both simple and combined
 public class SimpleRelativeFilesystemTests : RelativeFilesystemTester<Source> {
 
-    private VirtualFilesystem vfs;
-    protected override RelativeFilesystem SetupFilesystem() {
-        vfs = new VirtualFilesystem();
+    [NotNull]
+    private VirtualFilesystem? Vfs { get; set; }
 
-        return new RelativeFilesystem(vfs, "prefix".AsPath());
+    protected override RelativeFilesystem SetupFilesystem() {
+        Vfs = new VirtualFilesystem();
+
+        return new RelativeFilesystem(Vfs, "prefix".AsPath());
     }
 
     protected override void MakeFile(ModAssetPath fileName, string content) {
-        vfs.AddFile(fileName.path, content);
+        Vfs.AddFile(fileName.path, content);
     }
 }
 

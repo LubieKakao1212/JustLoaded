@@ -11,8 +11,6 @@ using JustLoaded.Logger;
 namespace JustLoaded.Loading;
 
 public class RegisterContentLoadingPhase : ILoadingPhase {
-
-    private static readonly MethodInfo GenericRegister = typeof(IContentDatabase).GetMethod(nameof(IContentDatabase.AddContent))!;
     
     public void Load(ModLoaderSystem modLoader) {
         var masterDb = modLoader.MasterDb;
@@ -59,10 +57,8 @@ public class RegisterContentLoadingPhase : ILoadingPhase {
                                 logger?.Error($"Could not register a null value from field { field }");
                                 continue;
                             }
-
-                            var register = GenericRegister!.MakeGenericMethod(contentType);
                             
-                            var result = (bool) register.Invoke(db, new[] { key, value })!;
+                            var result = db.AddContent(key, value, contentType);
                             if (!result) {
                                 logger?.Error($"Could not register value from field, key { key } is already in use");
                                 continue;

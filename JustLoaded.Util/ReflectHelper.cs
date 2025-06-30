@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace JustLoaded.Util;
@@ -40,6 +41,10 @@ public static class ReflectHelper {
                 yield return type;
             }
         }
+    }
+
+    public static bool IsAssignableTo(this Type type, [NotNullWhen(true)] Type? targetType) {
+        return targetType != null && targetType.IsAssignableFrom(type);
     }
     
 }

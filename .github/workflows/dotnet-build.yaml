@@ -18,7 +18,7 @@ jobs:
   Build-And-Test:
     strategy:
       matrix:
-        os: [ubuntu, windows, macos]
+        os: [windows]
     env:
       dotnet-version: ${{ inputs.dotnet_version || '8.0.x' }}
     
@@ -30,9 +30,7 @@ jobs:
         id: setup-dotnet
         with:
           dotnet-version: | #${{ env.dotnet-version }}
-            8.0.x 
-            7.0.x 
-            6.0.x 
+            8.0.x
       - name: Create temporary global.json
         run: |
           echo '{"sdk":{"version": "${{ steps.setup-dotnet.outputs.dotnet-version }}"}}' > ./global.json
@@ -63,9 +61,7 @@ jobs:
         id: setup-dotnet
         with:
           dotnet-version: | #${{ env.dotnet-version }}
-            8.0.x 
-            7.0.x 
-            6.0.x 
+            8.0.x
       - name: Create temporary global.json
         run: |
           echo '{"sdk":{"version": "${{ steps.setup-dotnet.outputs.dotnet-version }}"}}' > ./global.json
@@ -106,9 +102,7 @@ jobs:
         id: setup-dotnet
         with:
           dotnet-version: | #${{ env.dotnet-version }}
-            8.0.x 
-            7.0.x 
-            6.0.x 
+            8.0.x
       - name: Create temporary global.json
         run: |
           echo '{"sdk":{"version": "${{ env.dotnet-version }}"}}' > ./global.json

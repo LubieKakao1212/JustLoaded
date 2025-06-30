@@ -17,6 +17,13 @@ namespace JustLoaded.Content.Database
         /// <returns>True if element was successfully added, False if given key already exists</returns>
         /// <exception cref="DatabaseLockedException">When this database is locked (<see cref="IsLocked"/>)</exception>
         bool AddContent<TContent>(ContentKey key, TContent value) where TContent : notnull;
+
+        /// <summary>
+        /// Overload of <see cref="AddContent{TContent}"/> for use with reflection. <br/>
+        /// If you are not using reflection and know the type at compile time, use <see cref="AddContent{TContent}"/>
+        /// </summary>
+        /// <inheritdoc cref="AddContent{TContent}"/>
+        bool AddContent(ContentKey key, object value, Type type);
         
         void RegisterContentAddedCallback<TContent>(ContentAddedCallback<TContent> callback) where TContent : notnull;
     }
