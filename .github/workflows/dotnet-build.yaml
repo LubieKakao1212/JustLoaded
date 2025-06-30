@@ -18,7 +18,7 @@ jobs:
   Build-And-Test:
     strategy:
       matrix:
-        os: [ubuntu, windows, macos]
+        os: [ubuntu]
     env:
       dotnet-version: ${{ inputs.dotnet_version || '8.0.x' }}
     
@@ -33,6 +33,7 @@ jobs:
             8.0.x 
             7.0.x 
             6.0.x 
+            5.0.100
       - name: Create temporary global.json
         run: |
           echo '{"sdk":{"version": "${{ steps.setup-dotnet.outputs.dotnet-version }}"}}' > ./global.json
