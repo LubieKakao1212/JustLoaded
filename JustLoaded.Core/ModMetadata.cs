@@ -1,17 +1,20 @@
 using System.Diagnostics.CodeAnalysis;
 using JustLoaded.Content;
 using JustLoaded.Util;
+using JustLoaded.Util.Attachment;
 
 namespace JustLoaded.Core;
 
-public class ModMetadata {
+public class ModMetadata : IAttachmentProvider {
 
     public ContentKey ModKey { get; protected init; }
     
     [NotNull] protected internal Dictionary<ContentKey, Order>? HardDependencies { get; protected init; }
     [NotNull] protected internal Dictionary<ContentKey, Order>? SoftDependencies { get; protected init; }
     
-    protected ModMetadata() {
+    private readonly IAttachmentProvider _attachmentProviderImpl = new AttachmentProviderBase();
+
+    private ModMetadata() {
         
     }
 
@@ -40,13 +43,32 @@ public class ModMetadata {
     public static Builder Create(string modId) {
         return new Builder(modId);
     }
+
+    #region AttachmentProvider
+
+    public T? GetAttachment<T>() where T : class {
+        return _attachmentProviderImpl.GetAttachment<T>();
+    }
+
+    public T GetRequiredAttachment<T>() where T : class {
+        return _attachmentProviderImpl.GetRequiredAttachment<T>();
+    }
+
+    public bool HasAttachment<T>() where T : class {
+        return _attachmentProviderImpl.HasAttachment<T>();
+    }
+
+    #endregion
     
-    public class Builder {
+    
+    public class Builder : IMutableAttachmentProvider<Builder> {
 
         protected readonly string modId;
         protected readonly Dictionary<ContentKey, Order> requiredDependencies = new();
         protected readonly Dictionary<ContentKey, Order> optionalDependencies = new();
-        
+
+        private readonly IMutableAttachmentProvider<AttachmentProviderImpl> _attachmentProviderImpl = new AttachmentProviderImpl();
+
         public Builder(string modId) {
             this.modId = modId;
         }
@@ -74,8 +96,6 @@ public class ModMetadata {
             optionalDependencies.Add(ToModKey(depId), order);
             return this;
         }
-
-
         
         public ModMetadata Build() {
             return new ModMetadata() {
@@ -84,5 +104,28 @@ public class ModMetadata {
                 SoftDependencies = optionalDependencies
             };
         }
+
+        #region AttachmentProvider
+        public T? GetAttachment<T>() where T : class {
+            return _attachmentProviderImpl.GetAttachment<T>();
+        }
+
+        public T GetRequiredAttachment<T>() where T : class {
+            return _attachmentProviderImpl.GetRequiredAttachment<T>();
+        }
+
+        public bool HasAttachment<T>() where T : class {
+            return _attachmentProviderImpl.HasAttachment<T>();
+        }
+
+        public Builder AddAttachment<T>(T attachment) where T : class {
+            _attachmentProviderImpl.AddAttachment(attachment);
+            return this;
+        }
+        
+        public T GetOrAddAttachment<T>(Func<T> constructor) where T : class {
+            return _attachmentProviderImpl.GetOrAddAttachment(constructor);
+        }
+        #endregion
     }
 }

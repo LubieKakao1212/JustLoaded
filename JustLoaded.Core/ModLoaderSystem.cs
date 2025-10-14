@@ -4,11 +4,12 @@ using JustLoaded.Core.Entrypoint;
 using JustLoaded.Core.Loading;
 using JustLoaded.Util;
 using JustLoaded.Util.Algorithm;
+using JustLoaded.Util.Attachment;
 using JustLoaded.Util.Extensions;
 
 namespace JustLoaded.Core;
 
-public class ModLoaderSystem {
+public class ModLoaderSystem : IMutableAttachmentProvider<ModLoaderSystem> {
     public InitializationPhase CurrentInitPhase { get; private set; }
 
     public IReadOnlyList<Mod> Mods => _mods;
@@ -22,26 +23,13 @@ public class ModLoaderSystem {
     private readonly List<Mod> _mods = new();
     private readonly HashSet<Mod> _modsSet = new();
 
-    private readonly Dictionary<Type, object> _attachments = new();
+    private readonly IMutableAttachmentProvider<AttachmentProviderImpl> _attachmentProviderImpl = new AttachmentProviderImpl();
     
     private ModLoaderSystem(IModProvider modProvider, IModFilter modFilter) {
         _modProvider = modProvider;
         _modFilter = modFilter;
         RegisterDefault();
         CurrentInitPhase = InitializationPhase.Created;
-    }
-
-    public ModLoaderSystem AddAttachment<T>(T attachment) where T : class {
-        _attachments.Add(typeof(T), attachment);
-        return this;
-    }
-
-    public T? GetAttachment<T>() where T : class {
-        return _attachments.GetValueOrDefault(typeof(T)) as T;
-    }
-
-    public T GetRequiredAttachment<T>() where T : class {
-        return GetAttachment<T>() ?? throw new ApplicationException($"No attachment of type {typeof(T)}");
     }
     
     public void DiscoverMods() {
@@ -239,6 +227,31 @@ public class ModLoaderSystem {
 
         return true;
     }
+
+    #region AttachmentProvider
+        
+    public T? GetAttachment<T>() where T : class {
+        return _attachmentProviderImpl.GetAttachment<T>();
+    }
+
+    public T GetRequiredAttachment<T>() where T : class {
+        return _attachmentProviderImpl.GetRequiredAttachment<T>();
+    }
+
+    public bool HasAttachment<T>() where T : class {
+        return _attachmentProviderImpl.HasAttachment<T>();
+    }
+
+    public ModLoaderSystem AddAttachment<T>(T attachment) where T : class {
+        _attachmentProviderImpl.AddAttachment(attachment);
+        return this;
+    }
+
+    public T GetOrAddAttachment<T>(Func<T> constructor) where T : class {
+        return _attachmentProviderImpl.GetOrAddAttachment(constructor);
+    }
+
+    #endregion
     
     public class Builder(IModProvider modProvider) {
 
