@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
@@ -12,10 +12,13 @@
       <ProjectReference Include="..\MultiAssembly.Game\MultiAssembly.Game.csproj" />
     </ItemGroup>
     
-    <Target Name="CopyMod" AfterTargets="Build">
-        <ItemGroup>
-            <_FilesToCopy Include="$(OutputPath)**/*"/>
-        </ItemGroup>
-        <Message Importance="high" Text="_FilesToCopy: @(_FilesToCopy)"/>
+<!--    <Target Name="CopyMod" AfterTargets="Build">-->
+<!--        <ItemGroup>-->
+<!--            <_FilesToCopy Include="$(OutputPath)**/*"/>-->
+<!--        </ItemGroup>-->
+<!--        <Message Importance="high" Text="_FilesToCopy: @(_FilesToCopy)"/>-->
+<!--    </Target>-->
+    <Target Name="CopyMod" AfterTargets="AfterBuild">
+        <Copy SourceFiles="$(OutputPath)/$(AssemblyName).dll" DestinationFolder="$(ProjectDir)/../MultiAssembly.Game/$(OutputPath)/Mods"/>
     </Target>
 </Project>

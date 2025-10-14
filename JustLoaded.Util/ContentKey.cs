@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+//TODO Fix namespace
 namespace JustLoaded.Content
 {
     public readonly struct ContentKey : IEquatable<ContentKey>

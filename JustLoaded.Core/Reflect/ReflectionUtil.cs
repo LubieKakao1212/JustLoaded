@@ -25,12 +25,12 @@ public static class ReflectionUtil {
     #endregion
     
     public static IEnumerable<(string, Type)> GetAllModTypesByExtractor(this ModLoaderSystem modLoader, Func<Assembly, IEnumerable<Type>> typeExtractor) {
-        var mods = modLoader.MasterDb.GetDatabase<Mod>().GetContentEntries<Mod>();
-
+        var mods = modLoader.Mods;
+    
         foreach (var mod in mods) {
-            foreach (var assembly in mod.Value.Assemblies) {
+            foreach (var assembly in mod.Assemblies) {
                 foreach (var type in typeExtractor(assembly)) {
-                    yield return (mod.Key.path, type);
+                    yield return (mod.Metadata.ModKey.path, type);
                 }
             }
         }

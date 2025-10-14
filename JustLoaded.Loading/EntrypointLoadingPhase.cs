@@ -1,5 +1,3 @@
-using JustLoaded.Content;
-using JustLoaded.Content.Database;
 using JustLoaded.Core;
 using JustLoaded.Core.Loading;
 using JustLoaded.Core.Reflect;
@@ -11,16 +9,15 @@ public abstract class EntrypointLoadingPhase<TEntrypoint> : ILoadingPhase {
     protected EntrypointLoadingPhase() { }
     
     public void Load(ModLoaderSystem modLoader) {
-        var mods = (ContentDatabase<Mod>)modLoader.MasterDb.GetDatabase<Mod>(new ContentKey("core:mods"));
+        var mods = modLoader.Mods;
         
         Setup(modLoader);
-        foreach (var modEntry in mods.ContentEntries) {
-            var mod = modEntry.Value;
+        foreach (var mod in mods) {
             bool foundEntrypoint = false;
             foreach (var assembly in mod.Assemblies) {
-                foreach (var entrypointType in assembly.GetModTypeByBase<TEntrypoint>(ModMetadata.ToModId(modEntry.Key))) {
+                foreach (var entrypointType in assembly.GetModTypeByBase<TEntrypoint>(ModMetadata.ToModId(mod.Metadata.ModKey))) {
                     if (foundEntrypoint) {
-                        throw new ApplicationException($"Duplicate entrypoint {typeof(TEntrypoint)} for mod {modEntry.Key}");
+                        throw new ApplicationException($"Duplicate entrypoint {typeof(TEntrypoint)} for mod {mod.Metadata.ModKey}");
                     }
                     foundEntrypoint = true;
 

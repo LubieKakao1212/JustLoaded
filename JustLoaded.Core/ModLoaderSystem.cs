@@ -1,5 +1,4 @@
 using JustLoaded.Content;
-using JustLoaded.Content.Database;
 using JustLoaded.Core.Discovery;
 using JustLoaded.Core.Entrypoint;
 using JustLoaded.Core.Loading;
@@ -11,24 +10,25 @@ namespace JustLoaded.Core;
 
 public class ModLoaderSystem {
     public InitializationPhase CurrentInitPhase { get; private set; }
-    public IReadOnlyMasterDatabase MasterDb => _masterDb;
-    
+
+    public IReadOnlyList<Mod> Mods => _mods;
+    //TODO Make read only set
+    // public IReadOnlySet<Mod> ModsSet => _modsSet;
+
     private readonly IModProvider _modProvider;
     private readonly IModFilter _modFilter;
-    private readonly MasterDatabase _masterDb;
-
-    private readonly ArrayDatabase<ILoadingPhase> _loadingPhases = new();
-    private readonly ArrayDatabase<Mod> _mods = new();
+    
+    private readonly List<ILoadingPhase> _loadingPhases = new();
+    private readonly List<Mod> _mods = new();
     private readonly HashSet<Mod> _modsSet = new();
 
     private readonly Dictionary<Type, object> _attachments = new();
     
-    private ModLoaderSystem(IModProvider modProvider, IModFilter modFilter, MasterDatabase masterDb) {
-        this._masterDb = masterDb;
-        this._modProvider = modProvider;
-        this._modFilter = modFilter;
+    private ModLoaderSystem(IModProvider modProvider, IModFilter modFilter) {
+        _modProvider = modProvider;
+        _modFilter = modFilter;
         RegisterDefault();
-        this.CurrentInitPhase = InitializationPhase.Created;
+        CurrentInitPhase = InitializationPhase.Created;
     }
 
     public ModLoaderSystem AddAttachment<T>(T attachment) where T : class {
@@ -174,7 +174,7 @@ public class ModLoaderSystem {
             }
         }
         
-        _mods.Init(sorter.Sort().Select((key) => new KeyValuePair<ContentKey, Mod>(key, modsByKey[key])));
+        _mods.AddRange(sorter.Sort().Select((key) => modsByKey[key]));
         #endregion
 
         CurrentInitPhase = InitializationPhase.DependenciesResolved;
@@ -190,7 +190,7 @@ public class ModLoaderSystem {
         
         var resolver = new OrderedResolver<ILoadingPhase>();
         try {
-            foreach (var mod in _mods.ContentValues) {
+            foreach (var mod in _mods) {
                 mod.Initializer.SystemInit(mod, resolver);
             }
         }
@@ -200,7 +200,7 @@ public class ModLoaderSystem {
         }
         
 
-        _loadingPhases.Init(resolver.Resolve());
+        _loadingPhases.AddRange(resolver.Resolve().Select(pair => pair.Value));
         CurrentInitPhase = InitializationPhase.ModSystemInitialized;
     }
 
@@ -213,7 +213,7 @@ public class ModLoaderSystem {
         CurrentInitPhase = InitializationPhase.Loading;
 
         try {
-            foreach (var phase in _loadingPhases.ContentValues) {
+            foreach (var phase in _loadingPhases) {
                 phase.Load(this);
             }
         }
@@ -226,8 +226,6 @@ public class ModLoaderSystem {
     }
     
     private void RegisterDefault() {
-        _masterDb.RegisterDatabase(new ContentKey("core:loading-phases"), _loadingPhases, DBRegistrationType.Main);
-        _masterDb.RegisterDatabase(new ContentKey("core:mods"), _mods, DBRegistrationType.Main);
     }
 
     private bool IsOk(bool log = true) {
@@ -242,20 +240,13 @@ public class ModLoaderSystem {
         return true;
     }
     
-    public class Builder {
+    public class Builder(IModProvider modProvider) {
 
-        private readonly IModProvider _modProvider;
-        public MasterDatabase? MasterDb { get; init; }
         public IModFilter? ModFilter { get; init; }
 
-        public Builder(IModProvider modProvider) {
-            this._modProvider = modProvider;
-        }
-
         public ModLoaderSystem Build() {
-            var db = MasterDb ?? new MasterDatabase();
             var filter = ModFilter ?? IdentityModFilter.Instance;
-            return new ModLoaderSystem(_modProvider, filter, db);
+            return new ModLoaderSystem(modProvider, filter);
         }
         
     }

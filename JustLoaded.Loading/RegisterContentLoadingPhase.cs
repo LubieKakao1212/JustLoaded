@@ -13,15 +13,14 @@ namespace JustLoaded.Loading;
 public class RegisterContentLoadingPhase : ILoadingPhase {
     
     public void Load(ModLoaderSystem modLoader) {
-        var masterDb = modLoader.MasterDb;
-        var mods = (IContentDatabase<Mod>?) masterDb.GetByContentType<Mod>();
+        var masterDb = modLoader.GetRequiredAttachment<IReadOnlyMasterDatabase>();
+        var mods = modLoader.Mods;
 
         var logger = modLoader.GetAttachment<ILogger>();
         
         //I don't like this code
-        foreach (var modEntry in mods!.ContentEntries.Reverse() /*Reversing the order so mods which are last have most priority in filling the databases*/) {
-            var modId = ModMetadata.ToModId(modEntry.Key);
-            var mod = modEntry.Value;
+        foreach (var mod in mods.Reverse() /*Reversing the order so mods which are last have most priority in filling the databases*/) {
+            var modId = ModMetadata.ToModId(mod.Metadata.ModKey);
             
             foreach (var assembly in mod.Assemblies) {
                 foreach (var container in assembly.GetModTypeByAttribute<ContentContainerAttribute>(modId)) {
