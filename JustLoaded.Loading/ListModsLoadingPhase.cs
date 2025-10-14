@@ -14,7 +14,7 @@ public class ListModsLoadingPhase : ILoadingPhase {
         
         logger.Info("Sorted mod list:");
         foreach (var modKey in mods) {
-            logger.Info(modKey.Metadata.ModKey.path);
+            logger.Info(modKey.Metadata.ModId);
         }
     }
     

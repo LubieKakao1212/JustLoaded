@@ -15,9 +15,9 @@ public abstract class EntrypointLoadingPhase<TEntrypoint> : ILoadingPhase {
         foreach (var mod in mods) {
             bool foundEntrypoint = false;
             foreach (var assembly in mod.Assemblies) {
-                foreach (var entrypointType in assembly.GetModTypeByBase<TEntrypoint>(ModMetadata.ToModId(mod.Metadata.ModKey))) {
+                foreach (var entrypointType in assembly.GetModTypeByBase<TEntrypoint>(mod.Metadata.ModId)) {
                     if (foundEntrypoint) {
-                        throw new ApplicationException($"Duplicate entrypoint {typeof(TEntrypoint)} for mod {mod.Metadata.ModKey}");
+                        throw new ApplicationException($"Duplicate entrypoint {typeof(TEntrypoint)} for mod {mod.Metadata.ModId}");
                     }
                     foundEntrypoint = true;
 

@@ -36,7 +36,7 @@ public class Mod(ModMetadata metadata) : IMutableAttachmentProvider<Mod> {
 
     public Mod AddAssembly(Assembly assembly) {
         if (_assemblies.Contains(assembly)) {
-            Console.Error.WriteLine("Duplicate assembly in " + Metadata.ModKey);
+            Console.Error.WriteLine("Duplicate assembly in " + Metadata.ModId);
             return this;
         }
         

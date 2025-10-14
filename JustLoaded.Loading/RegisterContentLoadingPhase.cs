@@ -20,7 +20,7 @@ public class RegisterContentLoadingPhase : ILoadingPhase {
         
         //I don't like this code
         foreach (var mod in mods.Reverse() /*Reversing the order so mods which are last have most priority in filling the databases*/) {
-            var modId = ModMetadata.ToModId(mod.Metadata.ModKey);
+            var modId = mod.Metadata.ModId;
             
             foreach (var assembly in mod.Assemblies) {
                 foreach (var container in assembly.GetModTypeByAttribute<ContentContainerAttribute>(modId)) {

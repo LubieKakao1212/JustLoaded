@@ -64,13 +64,13 @@ public class ModLoaderSystem : IMutableAttachmentProvider<ModLoaderSystem> {
     public void ResolveDependencies() {
         CurrentInitPhase.AssertAt(InitializationPhase.ModsSet);
         
-        var modKeys = new HashSet<ContentKey>();
-        var modsByKey = new Dictionary<ContentKey, Mod>();
+        var modKeys = new HashSet<string>();
+        var modsByKey = new Dictionary<string, Mod>();
         #region Get Keys and handle duplicates
 
-        var duplicates = new Dictionary<ContentKey, int>();
+        var duplicates = new Dictionary<string, int>();
         foreach (var mod in _modsSet) {
-            var key = mod.Metadata.ModKey;
+            var key = mod.Metadata.ModId;
             if (modKeys.Contains(key)) {
                 duplicates.PreIncrement(key);
             }
@@ -79,7 +79,7 @@ public class ModLoaderSystem : IMutableAttachmentProvider<ModLoaderSystem> {
         }
         foreach (var duplicate in duplicates) {
             //TODO use logger (Error)
-            Console.Error.WriteLine($"Mod with id {ModMetadata.ToModId(duplicate.Key)} was found {duplicate.Value + 1} times");
+            Console.Error.WriteLine($"Mod with id {duplicate.Key} was found {duplicate.Value + 1} times");
             CurrentInitPhase = InitializationPhase.ErroredDuplicateMods;
         }
         if (!IsOk()) {
@@ -87,18 +87,18 @@ public class ModLoaderSystem : IMutableAttachmentProvider<ModLoaderSystem> {
         }
 
         foreach (var mod in _modsSet) {
-            modsByKey.Add(mod.Metadata.ModKey, mod);
+            modsByKey.Add(mod.Metadata.ModId, mod);
         }
         #endregion
         
         #region Validate Required
 
-        var failedDependencies = new HashSet<(ContentKey mod, ContentKey dependency)>();
+        var failedDependencies = new HashSet<(string mod, string dependency)>();
         foreach (var mod in _modsSet) {
             var meta = mod.Metadata;
             foreach (var dep in meta.HardDependencies.Keys) {
                 if (!modKeys.Contains(dep)) {
-                    failedDependencies.Add((meta.ModKey, dep));
+                    failedDependencies.Add((meta.ModId, dep));
                 }
             }
         }
@@ -114,7 +114,7 @@ public class ModLoaderSystem : IMutableAttachmentProvider<ModLoaderSystem> {
 
         #region Sort
 
-        var sorter = new TopoSorter<ContentKey>();
+        var sorter = new TopoSorter<string>();
         foreach (var key in modKeys) {
             sorter.AddElement(key);
         }
@@ -126,10 +126,10 @@ public class ModLoaderSystem : IMutableAttachmentProvider<ModLoaderSystem> {
 
                 switch (dep.Value) {
                     case Order.After:
-                        sorter.AddDependency(meta.ModKey, dep.Key);
+                        sorter.AddDependency(meta.ModId, dep.Key);
                         continue;
                     case Order.Before:
-                        sorter.AddDependency(dep.Key, meta.ModKey);
+                        sorter.AddDependency(dep.Key, meta.ModId);
                         continue;
                     default:
                         continue;
@@ -142,7 +142,7 @@ public class ModLoaderSystem : IMutableAttachmentProvider<ModLoaderSystem> {
             foreach (var dep in meta.SoftDependencies) {
                 if (dep.Value == Order.Any) {
                     //TODO use logger
-                    Console.Out.WriteLine($"Optional dependency with { Order.Any } found for { meta.ModKey } on { dep }, this does nothing and be skipped");
+                    Console.Out.WriteLine($"Optional dependency with { Order.Any } found for { meta.ModId } on { dep }, this does nothing and be skipped");
                     continue;
                 }
                 if (!modKeys.Contains(dep.Key)) {
@@ -151,10 +151,10 @@ public class ModLoaderSystem : IMutableAttachmentProvider<ModLoaderSystem> {
                 
                 switch (dep.Value) {
                     case Order.After:
-                        sorter.AddDependency(meta.ModKey, dep.Key);
+                        sorter.AddDependency(meta.ModId, dep.Key);
                         continue;
                     case Order.Before:
-                        sorter.AddDependency(dep.Key, meta.ModKey);
+                        sorter.AddDependency(dep.Key, meta.ModId);
                         continue;
                     default:
                         continue;

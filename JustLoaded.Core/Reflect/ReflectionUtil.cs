@@ -30,7 +30,7 @@ public static class ReflectionUtil {
         foreach (var mod in mods) {
             foreach (var assembly in mod.Assemblies) {
                 foreach (var type in typeExtractor(assembly)) {
-                    yield return (mod.Metadata.ModKey.path, type);
+                    yield return (mod.Metadata.ModId, type);
                 }
             }
         }
