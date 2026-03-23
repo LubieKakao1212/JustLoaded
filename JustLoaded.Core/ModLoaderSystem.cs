@@ -1,4 +1,3 @@
-using JustLoaded.Content;
 using JustLoaded.Core.Discovery;
 using JustLoaded.Core.Entrypoint;
 using JustLoaded.Core.Loading;
@@ -60,6 +59,8 @@ public class ModLoaderSystem : IMutableAttachmentProvider<ModLoaderSystem> {
 
     /// <summary>
     /// Resolves dependencies between mods and fills database core:mods
+    /// <br/><br/>
+    /// <b>In the future will be replaced by separate mod filtering and ordering interfaces</b> 
     /// </summary>
     public void ResolveDependencies() {
         CurrentInitPhase.AssertAt(InitializationPhase.ModsSet);

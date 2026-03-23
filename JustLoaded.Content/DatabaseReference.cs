@@ -1,4 +1,6 @@
-﻿namespace JustLoaded.Content
+﻿using JustLoaded.Util;
+
+namespace JustLoaded.Content
 {
     using Database;
     

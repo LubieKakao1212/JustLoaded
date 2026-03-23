@@ -1,5 +1,3 @@
-using JustLoaded.Content;
-
 namespace JustLoaded.Filesystem;
 
 public class CombinedFilesystem : IFilesystem {
