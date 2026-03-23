@@ -1,3 +1,5 @@
+using JustLoaded.Util;
+
 namespace JustLoaded.Content.Database;
 
 public interface IReadOnlyContentDatabase {

@@ -4,30 +4,25 @@ using JustLoaded.Content.Database;
 using JustLoaded.Core;
 using JustLoaded.Core.Loading;
 using JustLoaded.Core.Reflect;
+using JustLoaded.Util;
 
 namespace JustLoaded.Loading;
 
-public class RegisterDbReflectLoadingPhase : ILoadingPhase {
+public class RegisterDbReflectLoadingPhase(DBRegistrationType regType = DBRegistrationType.Main) : ILoadingPhase {
 
-    private static readonly Type _dbType = typeof(ContentDatabase<>);
+    private static readonly Type DbType = typeof(ContentDatabase<>);
 
-    private DBRegistrationType _dbRegistrationType;
-
-    public RegisterDbReflectLoadingPhase(DBRegistrationType regType = DBRegistrationType.Main) {
-        _dbRegistrationType = regType;
-    }
-    
     public void Load(ModLoaderSystem modLoader) {
 
-        var masterDb = (IDatabaseRegistrationContext)modLoader.MasterDb;
+        var masterDb = (IDatabaseRegistrationContext)modLoader.GetRequiredAttachment<IReadOnlyMasterDatabase>();
         
         foreach (var (modId, contentType) in modLoader.GetAllModTypesByAttribute<CreateDbAttribute>()) {
             var attrib = contentType.GetCustomAttribute<CreateDbAttribute>()!;
             var key = new ContentKey(modId, attrib.ContentId);
-            var contentDbType = _dbType.MakeGenericType(contentType);
+            var contentDbType = DbType.MakeGenericType(contentType);
 
             var db = Activator.CreateInstance(contentDbType)!;
-            masterDb.RegisterDatabase(key, contentType, (IContentDatabase)db, _dbRegistrationType);
+            masterDb.RegisterDatabase(key, contentType, (IContentDatabase)db, regType);
         }
     }
 }

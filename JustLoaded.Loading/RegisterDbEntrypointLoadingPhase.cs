@@ -8,7 +8,7 @@ public class RegisterDbEntrypointLoadingPhase : EntrypointLoadingPhase<IDatabase
     
     protected override void HandleEntrypointFor(Mod mod, IDatabaseRegisterer entrypoint, ModLoaderSystem modLoader) {
         //Dirty hack
-        entrypoint.RegisterDatabases((IDatabaseRegistrationContext)modLoader.MasterDb);
+        entrypoint.RegisterDatabases((IDatabaseRegistrationContext)modLoader.GetRequiredAttachment<IReadOnlyMasterDatabase>());
     }
     
 }

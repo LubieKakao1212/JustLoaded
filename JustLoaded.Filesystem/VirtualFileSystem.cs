@@ -1,6 +1,5 @@
 using System.Text;
 using JustLoaded.Util.Extensions;
-using JustLoaded.Content;
 using PathLib;
 
 namespace JustLoaded.Filesystem;

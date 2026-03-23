@@ -7,63 +7,63 @@ using JustLoaded.Core;
 using JustLoaded.Core.Loading;
 using JustLoaded.Core.Reflect;
 using JustLoaded.Logger;
+using JustLoaded.Util;
 
 namespace JustLoaded.Loading;
 
 public class RegisterContentLoadingPhase : ILoadingPhase {
     
     public void Load(ModLoaderSystem modLoader) {
-        var masterDb = modLoader.MasterDb;
-        var mods = (IContentDatabase<Mod>?) masterDb.GetByContentType<Mod>();
+        var masterDb = modLoader.GetRequiredAttachment<IReadOnlyMasterDatabase>();
+        var mods = modLoader.Mods;
 
         var logger = modLoader.GetAttachment<ILogger>();
         
         //I don't like this code
-        foreach (var modEntry in mods!.ContentEntries.Reverse() /*Reversing the order so mods which are last have most priority in filling the databases*/) {
-            var modId = ModMetadata.ToModId(modEntry.Key);
-            var mod = modEntry.Value;
+        foreach (var mod in mods.Reverse() /*Reversing the order so mods which are last have most priority in filling the databases*/) {
+            var modId = mod.Metadata.ModId;
             
             foreach (var assembly in mod.Assemblies) {
                 foreach (var container in assembly.GetModTypeByAttribute<ContentContainerAttribute>(modId)) {
                     RuntimeHelpers.RunClassConstructor(container.TypeHandle);
                     foreach (var field in container.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)) {
                         var attrib = field.GetCustomAttribute<RegisterContentAttribute>();
-                        if (attrib != null) {
-                            var dbId = attrib.databaseId;
-                            var contentType = field.FieldType;
-                            IContentDatabase? db;
-                            if (dbId == null) {
-                                db = masterDb.GetByContentType(contentType);
-                            }
-                            else {
-                                ContentKey dbKey = ToKey(dbId, modId);
-                                db = masterDb.GetDatabase(dbKey, contentType);
-                            }
+                        if (attrib == null) {
+                            continue;
+                        }
+                        var dbId = attrib.databaseId;
+                        var contentType = field.FieldType;
+                        IContentDatabase? db;
+                        if (dbId == null) {
+                            db = masterDb.GetByContentType(contentType);
+                        }
+                        else {
+                            ContentKey dbKey = ToKey(dbId, modId);
+                            db = masterDb.GetDatabase(dbKey, contentType);
+                        }
 
-                            if (db == null) {
-                                logger?.Error($"Could not find database for automatic registration for { field }");
-                                continue;
-                            }
-                            if (!db.IsTypeSupported(contentType)) {
-                                logger?.Error($"Could not find database for automatic registration for { field }");
-                                continue;
-                            }
+                        if (db == null) {
+                            logger?.Error($"Could not find database for automatic registration for { field }");
+                            continue;
+                        }
+                        if (!db.IsTypeSupported(contentType)) {
+                            logger?.Error($"Could not find database for automatic registration for { field }");
+                            continue;
+                        }
                             
-                            var id = attrib.id;
-                            id ??= FieldNameToId(field.Name);
-                            var key = ToKey(id, modId);
-                            var value = field.GetValue(null);
-                            if (value == null) {
-                                logger?.Error($"Could not register a null value from field { field }");
-                                continue;
-                            }
+                        var id = attrib.id;
+                        id ??= FieldNameToId(field.Name);
+                        var key = ToKey(id, modId);
+                        var value = field.GetValue(null);
+                        if (value == null) {
+                            logger?.Error($"Could not register a null value from field { field }");
+                            continue;
+                        }
                             
-                            var result = db.AddContent(key, value, contentType);
-                            if (!result) {
-                                logger?.Error($"Could not register value from field, key { key } is already in use");
-                                continue;
-                            }
-                            
+                        var result = db.AddContent(key, value, contentType);
+                        if (!result) {
+                            logger?.Error($"Could not register value from field, key { key } is already in use");
+                            continue;
                         }
                     }
                 }

@@ -13,7 +13,7 @@ public class LoggingModProvider : IModProvider {
 
     public IEnumerable<Mod> DiscoverMods() {
         foreach (var mod in _innerModProvider.DiscoverMods()) {
-            _logger.Info($"Found {mod.Metadata.ModKey}");
+            _logger.Info($"Found {mod.Metadata.ModId}");
             yield return mod;
         }
     }

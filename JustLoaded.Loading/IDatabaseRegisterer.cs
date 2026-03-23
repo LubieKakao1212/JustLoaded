@@ -1,6 +1,6 @@
 using JustLoaded.Content.Database;
 
-namespace JustLoaded.Core.Entrypoint;
+namespace JustLoaded.Loading;
 
 public interface IDatabaseRegisterer {
 

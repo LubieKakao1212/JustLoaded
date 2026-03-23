@@ -1,47 +1,34 @@
-using JustLoaded.Content;
-using JustLoaded.Content.Database;
 using JustLoaded.Core.Discovery;
 using JustLoaded.Core.Entrypoint;
 using JustLoaded.Core.Loading;
 using JustLoaded.Util;
 using JustLoaded.Util.Algorithm;
+using JustLoaded.Util.Attachment;
 using JustLoaded.Util.Extensions;
 
 namespace JustLoaded.Core;
 
-public class ModLoaderSystem {
+public class ModLoaderSystem : IMutableAttachmentProvider<ModLoaderSystem> {
     public InitializationPhase CurrentInitPhase { get; private set; }
-    public IReadOnlyMasterDatabase MasterDb => _masterDb;
-    
+
+    public IReadOnlyList<Mod> Mods => _mods;
+    //TODO Make read only set
+    // public IReadOnlySet<Mod> ModsSet => _modsSet;
+
     private readonly IModProvider _modProvider;
     private readonly IModFilter _modFilter;
-    private readonly MasterDatabase _masterDb;
-
-    private readonly ArrayDatabase<ILoadingPhase> _loadingPhases = new();
-    private readonly ArrayDatabase<Mod> _mods = new();
+    
+    private readonly List<ILoadingPhase> _loadingPhases = new();
+    private readonly List<Mod> _mods = new();
     private readonly HashSet<Mod> _modsSet = new();
 
-    private readonly Dictionary<Type, object> _attachments = new();
+    private readonly IMutableAttachmentProvider<AttachmentProviderImpl> _attachmentProviderImpl = new AttachmentProviderImpl();
     
-    private ModLoaderSystem(IModProvider modProvider, IModFilter modFilter, MasterDatabase masterDb) {
-        this._masterDb = masterDb;
-        this._modProvider = modProvider;
-        this._modFilter = modFilter;
+    private ModLoaderSystem(IModProvider modProvider, IModFilter modFilter) {
+        _modProvider = modProvider;
+        _modFilter = modFilter;
         RegisterDefault();
-        this.CurrentInitPhase = InitializationPhase.Created;
-    }
-
-    public ModLoaderSystem AddAttachment<T>(T attachment) where T : class {
-        _attachments.Add(typeof(T), attachment);
-        return this;
-    }
-
-    public T? GetAttachment<T>() where T : class {
-        return _attachments.GetValueOrDefault(typeof(T)) as T;
-    }
-
-    public T GetRequiredAttachment<T>() where T : class {
-        return GetAttachment<T>() ?? throw new ApplicationException($"No attachment of type {typeof(T)}");
+        CurrentInitPhase = InitializationPhase.Created;
     }
     
     public void DiscoverMods() {
@@ -72,17 +59,19 @@ public class ModLoaderSystem {
 
     /// <summary>
     /// Resolves dependencies between mods and fills database core:mods
+    /// <br/><br/>
+    /// <b>In the future will be replaced by separate mod filtering and ordering interfaces</b> 
     /// </summary>
     public void ResolveDependencies() {
         CurrentInitPhase.AssertAt(InitializationPhase.ModsSet);
         
-        var modKeys = new HashSet<ContentKey>();
-        var modsByKey = new Dictionary<ContentKey, Mod>();
+        var modKeys = new HashSet<string>();
+        var modsByKey = new Dictionary<string, Mod>();
         #region Get Keys and handle duplicates
 
-        var duplicates = new Dictionary<ContentKey, int>();
+        var duplicates = new Dictionary<string, int>();
         foreach (var mod in _modsSet) {
-            var key = mod.Metadata.ModKey;
+            var key = mod.Metadata.ModId;
             if (modKeys.Contains(key)) {
                 duplicates.PreIncrement(key);
             }
@@ -91,7 +80,7 @@ public class ModLoaderSystem {
         }
         foreach (var duplicate in duplicates) {
             //TODO use logger (Error)
-            Console.Error.WriteLine($"Mod with id {ModMetadata.ToModId(duplicate.Key)} was found {duplicate.Value + 1} times");
+            Console.Error.WriteLine($"Mod with id {duplicate.Key} was found {duplicate.Value + 1} times");
             CurrentInitPhase = InitializationPhase.ErroredDuplicateMods;
         }
         if (!IsOk()) {
@@ -99,18 +88,18 @@ public class ModLoaderSystem {
         }
 
         foreach (var mod in _modsSet) {
-            modsByKey.Add(mod.Metadata.ModKey, mod);
+            modsByKey.Add(mod.Metadata.ModId, mod);
         }
         #endregion
         
         #region Validate Required
 
-        var failedDependencies = new HashSet<(ContentKey mod, ContentKey dependency)>();
+        var failedDependencies = new HashSet<(string mod, string dependency)>();
         foreach (var mod in _modsSet) {
             var meta = mod.Metadata;
             foreach (var dep in meta.HardDependencies.Keys) {
                 if (!modKeys.Contains(dep)) {
-                    failedDependencies.Add((meta.ModKey, dep));
+                    failedDependencies.Add((meta.ModId, dep));
                 }
             }
         }
@@ -126,7 +115,7 @@ public class ModLoaderSystem {
 
         #region Sort
 
-        var sorter = new TopoSorter<ContentKey>();
+        var sorter = new TopoSorter<string>();
         foreach (var key in modKeys) {
             sorter.AddElement(key);
         }
@@ -138,10 +127,10 @@ public class ModLoaderSystem {
 
                 switch (dep.Value) {
                     case Order.After:
-                        sorter.AddDependency(meta.ModKey, dep.Key);
+                        sorter.AddDependency(meta.ModId, dep.Key);
                         continue;
                     case Order.Before:
-                        sorter.AddDependency(dep.Key, meta.ModKey);
+                        sorter.AddDependency(dep.Key, meta.ModId);
                         continue;
                     default:
                         continue;
@@ -154,7 +143,7 @@ public class ModLoaderSystem {
             foreach (var dep in meta.SoftDependencies) {
                 if (dep.Value == Order.Any) {
                     //TODO use logger
-                    Console.Out.WriteLine($"Optional dependency with { Order.Any } found for { meta.ModKey } on { dep }, this does nothing and be skipped");
+                    Console.Out.WriteLine($"Optional dependency with { Order.Any } found for { meta.ModId } on { dep }, this does nothing and be skipped");
                     continue;
                 }
                 if (!modKeys.Contains(dep.Key)) {
@@ -163,10 +152,10 @@ public class ModLoaderSystem {
                 
                 switch (dep.Value) {
                     case Order.After:
-                        sorter.AddDependency(meta.ModKey, dep.Key);
+                        sorter.AddDependency(meta.ModId, dep.Key);
                         continue;
                     case Order.Before:
-                        sorter.AddDependency(dep.Key, meta.ModKey);
+                        sorter.AddDependency(dep.Key, meta.ModId);
                         continue;
                     default:
                         continue;
@@ -174,7 +163,7 @@ public class ModLoaderSystem {
             }
         }
         
-        _mods.Init(sorter.Sort().Select((key) => new KeyValuePair<ContentKey, Mod>(key, modsByKey[key])));
+        _mods.AddRange(sorter.Sort().Select((key) => modsByKey[key]));
         #endregion
 
         CurrentInitPhase = InitializationPhase.DependenciesResolved;
@@ -190,7 +179,7 @@ public class ModLoaderSystem {
         
         var resolver = new OrderedResolver<ILoadingPhase>();
         try {
-            foreach (var mod in _mods.ContentValues) {
+            foreach (var mod in _mods) {
                 mod.Initializer.SystemInit(mod, resolver);
             }
         }
@@ -200,7 +189,7 @@ public class ModLoaderSystem {
         }
         
 
-        _loadingPhases.Init(resolver.Resolve());
+        _loadingPhases.AddRange(resolver.Resolve().Select(pair => pair.Value));
         CurrentInitPhase = InitializationPhase.ModSystemInitialized;
     }
 
@@ -213,7 +202,7 @@ public class ModLoaderSystem {
         CurrentInitPhase = InitializationPhase.Loading;
 
         try {
-            foreach (var phase in _loadingPhases.ContentValues) {
+            foreach (var phase in _loadingPhases) {
                 phase.Load(this);
             }
         }
@@ -226,8 +215,6 @@ public class ModLoaderSystem {
     }
     
     private void RegisterDefault() {
-        _masterDb.RegisterDatabase(new ContentKey("core:loading-phases"), _loadingPhases, DBRegistrationType.Main);
-        _masterDb.RegisterDatabase(new ContentKey("core:mods"), _mods, DBRegistrationType.Main);
     }
 
     private bool IsOk(bool log = true) {
@@ -241,21 +228,39 @@ public class ModLoaderSystem {
 
         return true;
     }
-    
-    public class Builder {
 
-        private readonly IModProvider _modProvider;
-        public MasterDatabase? MasterDb { get; init; }
+    #region AttachmentProvider
+        
+    public T? GetAttachment<T>() where T : class {
+        return _attachmentProviderImpl.GetAttachment<T>();
+    }
+
+    public T GetRequiredAttachment<T>() where T : class {
+        return _attachmentProviderImpl.GetRequiredAttachment<T>();
+    }
+
+    public bool HasAttachment<T>() where T : class {
+        return _attachmentProviderImpl.HasAttachment<T>();
+    }
+
+    public ModLoaderSystem AddAttachment<T>(T attachment) where T : class {
+        _attachmentProviderImpl.AddAttachment(attachment);
+        return this;
+    }
+
+    public T GetOrAddAttachment<T>(Func<T> constructor) where T : class {
+        return _attachmentProviderImpl.GetOrAddAttachment(constructor);
+    }
+
+    #endregion
+    
+    public class Builder(IModProvider modProvider) {
+
         public IModFilter? ModFilter { get; init; }
 
-        public Builder(IModProvider modProvider) {
-            this._modProvider = modProvider;
-        }
-
         public ModLoaderSystem Build() {
-            var db = MasterDb ?? new MasterDatabase();
             var filter = ModFilter ?? IdentityModFilter.Instance;
-            return new ModLoaderSystem(_modProvider, filter, db);
+            return new ModLoaderSystem(modProvider, filter);
         }
         
     }
