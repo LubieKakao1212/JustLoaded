@@ -13,7 +13,7 @@
       <ProjectReference Include="..\..\..\JustLoaded.Loading\JustLoaded.Loading.csproj" />
     </ItemGroup>
     
-    <Target Name="BuildMods" BeforeTargets="BeforeBuild">
+    <Target Name="BuildMods" AfterTargets="AfterBuild">
         <ItemGroup>
             <Mods Include="../MultiAssembly.FunMod/MultiAssembly.FunMod.csproj"/>
         </ItemGroup>
