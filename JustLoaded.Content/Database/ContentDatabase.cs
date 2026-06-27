@@ -29,65 +29,51 @@ namespace JustLoaded.Content.Database
         }
 
         public virtual void AddContent(ContentKey key, Type type, object value) {
-            if (TryAddContent(key, type, value, out ContentDbAddOperationResult result)) {
-                return;
+            if (IsLocked) {
+                throw new DatabaseLockedException();
+            }
+
+            if (value is not TContent value1) {
+                throw new UnsupportedContentTypeException(value.GetType(), new[] { typeof(TContent) });;
+            }
+
+            if (!content.TryAdd(key, value1)) {
+                throw new ArgumentException($"Content with key {key} already exists");
             }
             
-            switch (result) {
-                case ContentDbAddOperationResult.Success:
-                    return;
-                
-                case ContentDbAddOperationResult.KeyExists:
-                    throw new ArgumentException($"Content with key {key} already exists");
-                
-                case ContentDbAddOperationResult.DatabaseLocked:
-                    throw new DatabaseLockedException();
-                
-                case ContentDbAddOperationResult.WrongContentType:
-                    throw new UnsupportedContentTypeException(value.GetType(), new[] { typeof(TContent) });;
-                
-                case ContentDbAddOperationResult.OtherError:
-                default:
-                    throw new ArgumentException($"An unknown error occurred during content addition");
-            }
+            ContentAdded(key, ref value1);
         }
  
-        public bool TryAddContent(ContentKey key, TContent value, out ContentDbAddOperationResult result) {
-            return TryAddContent<TContent>(key, value, out result);
+        public bool TryAddContent(ContentKey key, TContent value) {
+            return TryAddContent<TContent>(key, value);
         }
 
-        public virtual bool TryAddContent<TContent1>(ContentKey key, TContent1 value, out ContentDbAddOperationResult result) where TContent1 : notnull {
+        public virtual bool TryAddContent<TContent1>(ContentKey key, TContent1 value) where TContent1 : notnull {
             if (IsLocked) {
-                result = ContentDbAddOperationResult.DatabaseLocked;
                 return false;
             }
 
             if (value is not TContent value1) {
-                result = ContentDbAddOperationResult.WrongContentType;
                 return false;
             }
 
             if (!content.TryAdd(key, value1)) {
-                result = ContentDbAddOperationResult.KeyExists;
                 return false;
             }
             
             ContentAdded(key, ref value1);
-            result = ContentDbAddOperationResult.Success;
             return true;
         }
 
-        public virtual bool TryAddContent(ContentKey key, Type type, object value, out ContentDbAddOperationResult result) {
+        public virtual bool TryAddContent(ContentKey key, Type type, object value) {
             if (IsLocked) {
-                result = ContentDbAddOperationResult.DatabaseLocked;
                 return false;
             }
 
             if (typeof(TContent).IsAssignableFrom(type) && value is TContent value1) {
-                return TryAddContent<TContent>(key, value1, out result);
+                return TryAddContent<TContent>(key, value1);
             }
 
-            result = ContentDbAddOperationResult.WrongContentType;
             return false;
         }
     }

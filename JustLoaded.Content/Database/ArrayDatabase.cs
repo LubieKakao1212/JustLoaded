@@ -35,9 +35,8 @@ namespace JustLoaded.Content.Database
             throw new DatabaseLockedException();
         }
 
-        public override bool TryAddContent(ContentKey key, Type type, object value, out ContentDbAddOperationResult result)
+        public override bool TryAddContent(ContentKey key, Type type, object value)
         {
-            result = ContentDbAddOperationResult.DatabaseLocked;
             return false;
         }
     }
