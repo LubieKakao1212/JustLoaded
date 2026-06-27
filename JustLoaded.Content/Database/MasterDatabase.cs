@@ -43,15 +43,14 @@ public class MasterDatabase : ContentDatabase<IContentDatabase>, IReadOnlyMaster
         base.AddContent(key, type, value);
     }
 
-    public override bool TryAddContent(ContentKey key, Type type, object value, out ContentDbAddOperationResult result)
+    public override bool TryAddContent(ContentKey key, Type type, object value)
     {
         if (_keysByType.ContainsKey(type))
         {
-            result =  ContentDbAddOperationResult.DatabaseLocked;
             return false;
         }
 
-        if (!base.TryAddContent(key, type, value, out result))
+        if (!base.TryAddContent(key, type, value))
         {
             return false;
         }
@@ -104,7 +103,7 @@ public class MasterDatabase : ContentDatabase<IContentDatabase>, IReadOnlyMaster
                 {
                     throw new ContentRegistrationException($"Failed to register Main database [{key}] for type null");
                 }
-                if (!TryAddContent(key, type, database, out ContentDbAddOperationResult result))
+                if (!TryAddContent(key, type, database))
                 {
                     throw new ContentRegistrationException($"Failed to register Main database [{key}] for type: {type}, key or type already set");
                 }

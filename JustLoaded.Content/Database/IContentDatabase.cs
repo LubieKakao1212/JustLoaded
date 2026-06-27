@@ -33,14 +33,14 @@ namespace JustLoaded.Content.Database
         /// <exception cref="UnsupportedContentTypeException">When this <see cref="IContentDatabase"/> does not support given <typeparamref name="TContent"/> content Type</exception>
         /// <exception cref="DatabaseLockedException">When this database is locked (<see cref="IsLocked"/>)</exception>
         /// <returns>True if element was successfully added, False if any error was encountered during method execution</returns>
-        bool TryAddContent<TContent>(ContentKey key, TContent value, out ContentDbAddOperationResult result) where TContent : notnull;
+        bool TryAddContent<TContent>(ContentKey key, TContent value) where TContent : notnull;
         
         /// <summary>
         /// Overload of <see cref="TryAddContent{TContent}"/> for use with reflection. <br/>
         /// If you are not using reflection and know the type at compile time, use <see cref="TryAddContent{TContent}"/>
         /// </summary>
         /// <inheritdoc cref="TryAddContent{TContent}"/>
-        bool TryAddContent(ContentKey key, Type type, object value, out ContentDbAddOperationResult result);
+        bool TryAddContent(ContentKey key, Type type, object value);
         
         void RegisterContentAddedCallback<TContent>(ContentAddedCallback<TContent> callback) where TContent : notnull;
     }
@@ -81,7 +81,7 @@ namespace JustLoaded.Content.Database
         
         void AddContent(ContentKey key, TContent value);
         
-        bool TryAddContent(ContentKey key, TContent value, out ContentDbAddOperationResult result);
+        bool TryAddContent(ContentKey key, TContent value);
 
         [return: MaybeNull]
         TContent1 IReadOnlyContentDatabase.GetContent<TContent1>(ContentKey key)
