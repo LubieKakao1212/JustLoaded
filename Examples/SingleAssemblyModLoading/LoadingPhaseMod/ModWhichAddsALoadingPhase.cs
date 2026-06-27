@@ -5,6 +5,7 @@ using JustLoaded.Core.Loading;
 using JustLoaded.Core.Reflect;
 using JustLoaded.Discovery.Reflect;
 using JustLoaded.Loading;
+using JustLoaded.Util;
 
 namespace SingleAssemblyModLoading.LoadingPhaseMod;
 

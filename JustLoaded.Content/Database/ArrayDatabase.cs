@@ -29,10 +29,16 @@ namespace JustLoaded.Content.Database
             
             Lock();
         }
-        
-        public override bool AddContent(ContentKey key, TContent value)
+
+        public override void AddContent(ContentKey key, Type type, object value)
         {
             throw new DatabaseLockedException();
+        }
+
+        public override bool TryAddContent(ContentKey key, Type type, object value, out ContentDbAddOperationResult result)
+        {
+            result = ContentDbAddOperationResult.DatabaseLocked;
+            return false;
         }
     }
 }

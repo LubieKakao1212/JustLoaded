@@ -60,9 +60,11 @@ public class RegisterContentLoadingPhase : ILoadingPhase {
                             continue;
                         }
                             
-                        var result = db.AddContent(key, value, contentType);
+                        var result = db.TryAddContent(key, contentType, value, out ContentDbAddOperationResult operationResult);
                         if (!result) {
-                            logger?.Error($"Could not register value from field, key { key } is already in use");
+                            // logger?.Error($"Could not register value from field, key { key } is already in use");
+                            // TODO: Change error text based on operationResult
+                            logger?.Error($"Could not register value from field,. Error: { operationResult }");
                             continue;
                         }
                     }

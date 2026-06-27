@@ -32,17 +32,30 @@ public class MasterDatabase : ContentDatabase<IContentDatabase>, IReadOnlyMaster
         }
         return GetContent(key);
     }
+    
+    public override void AddContent(ContentKey key, IContentDatabase value)
+    {
+        AddContent(key, value.GetType(), value);
+    }
 
-    private bool AddContent(ContentKey key, Type type, IContentDatabase value)
+    public override void AddContent(ContentKey key, Type type, object value)
+    {
+        base.AddContent(key, type, value);
+    }
+
+    public override bool TryAddContent(ContentKey key, Type type, object value, out ContentDbAddOperationResult result)
     {
         if (_keysByType.ContainsKey(type))
         {
+            result =  ContentDbAddOperationResult.DatabaseLocked;
             return false;
         }
-        if (!base.AddContent(key, value))
+
+        if (!base.TryAddContent(key, type, value, out result))
         {
             return false;
         }
+
         _keysByType.Add(type, key);
         return true;
     }
@@ -56,6 +69,7 @@ public class MasterDatabase : ContentDatabase<IContentDatabase>, IReadOnlyMaster
     public IContentDatabase<TContent> CreateDatabase<TContent>(ContentKey key, DBRegistrationType registrationType = DBRegistrationType.Any) where TContent : notnull 
     {
         var db = new ContentDatabase<TContent>();
+        RegisterDatabase(key, typeof(TContent), db, registrationType);
         RegisterDatabase(key, typeof(TContent), db, registrationType);
         return db;
     }
@@ -81,7 +95,8 @@ public class MasterDatabase : ContentDatabase<IContentDatabase>, IReadOnlyMaster
             case DBRegistrationType.Any:
                 if (type != null)
                 {
-                    flag = this.AddContent(key, type, database);
+                    AddContent(key, type, database);
+                    flag = true;
                 }
                 goto case DBRegistrationType.Secondary;
             case DBRegistrationType.Main:
@@ -89,7 +104,7 @@ public class MasterDatabase : ContentDatabase<IContentDatabase>, IReadOnlyMaster
                 {
                     throw new ContentRegistrationException($"Failed to register Main database [{key}] for type null");
                 }
-                if (!this.AddContent(key, type, database))
+                if (!TryAddContent(key, type, database, out ContentDbAddOperationResult result))
                 {
                     throw new ContentRegistrationException($"Failed to register Main database [{key}] for type: {type}, key or type already set");
                 }
@@ -97,7 +112,7 @@ public class MasterDatabase : ContentDatabase<IContentDatabase>, IReadOnlyMaster
             case DBRegistrationType.Secondary:
                 if (!flag)
                 {
-                    this.AddContent(key, database);
+                    AddContent(key, database);
                 }
                 break;
         }
