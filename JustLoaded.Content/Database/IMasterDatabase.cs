@@ -2,7 +2,7 @@ using JustLoaded.Util;
 
 namespace JustLoaded.Content.Database;
 
-public interface IMasterDatabase : IContentDatabase<IContentDatabase> {
+public interface IMasterDatabase : IContentDatabase<IContentDatabase>, IDatabaseRegistrationContext {
     public ContentKey? KeyByContentType<TContent>()
     {
         return KeyByContentType(typeof(TContent));
@@ -29,16 +29,4 @@ public interface IMasterDatabase : IContentDatabase<IContentDatabase> {
     }
     
     public IContentDatabase GetDatabase(ContentKey? key, Type contentType);
-
-    public IContentDatabase<TContent> CreateDatabase<TContent>(ContentKey key,
-        DBRegistrationType registrationType = DBRegistrationType.Any) where TContent : notnull;
-
-    public void RegisterDatabase<TContent>(ContentKey key, ContentDatabase<TContent> database,
-        DBRegistrationType registrationType = DBRegistrationType.Any) where TContent : notnull;
-
-    public void RegisterDatabase<TContent>(ContentKey key, IContentDatabase database,
-        DBRegistrationType registrationType = DBRegistrationType.Any);
-
-    public void RegisterDatabase(ContentKey key, Type? type,
-        IContentDatabase database, DBRegistrationType registrationType = DBRegistrationType.Any);
 }
