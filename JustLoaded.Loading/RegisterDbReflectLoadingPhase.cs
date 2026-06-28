@@ -14,7 +14,7 @@ public class RegisterDbReflectLoadingPhase(DBRegistrationType regType = DBRegist
 
     public void Load(ModLoaderSystem modLoader) {
 
-        var masterDb = (IDatabaseRegistrationContext)modLoader.GetRequiredAttachment<IReadOnlyMasterDatabase>();
+        var masterDb = (IDatabaseRegistrationContext)modLoader.GetRequiredAttachment<IMasterDatabase>();
         
         foreach (var (modId, contentType) in modLoader.GetAllModTypesByAttribute<CreateDbAttribute>()) {
             var attrib = contentType.GetCustomAttribute<CreateDbAttribute>()!;
