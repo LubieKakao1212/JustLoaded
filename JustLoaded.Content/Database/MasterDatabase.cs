@@ -7,7 +7,7 @@ namespace JustLoaded.Content.Database;
 /// MasterDatabase contains <see cref="IContentDatabase"/> instances <br/>
 /// Contains a reference to itself under key "core:database"
 /// </summary>
-public class MasterDatabase : ContentDatabase<IContentDatabase>, IReadOnlyMasterDatabase, IDatabaseRegistrationContext
+public class MasterDatabase : ContentDatabase<IContentDatabase>, IMasterDatabase, IDatabaseRegistrationContext
 {
     private readonly Dictionary<Type, ContentKey> _keysByType = new();
 

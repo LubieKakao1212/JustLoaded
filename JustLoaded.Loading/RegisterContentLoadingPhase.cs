@@ -14,7 +14,7 @@ namespace JustLoaded.Loading;
 public class RegisterContentLoadingPhase : ILoadingPhase {
     
     public void Load(ModLoaderSystem modLoader) {
-        var masterDb = modLoader.GetRequiredAttachment<IReadOnlyMasterDatabase>();
+        var masterDb = modLoader.GetRequiredAttachment<IMasterDatabase>();
         var mods = modLoader.Mods;
 
         var logger = modLoader.GetAttachment<ILogger>();

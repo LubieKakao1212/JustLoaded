@@ -19,11 +19,11 @@ namespace JustLoaded.Content
         public BoundContentKey<TContent> Key { get; }
 
         private TContent? _value = null;
-        private IReadOnlyContentDatabase? _database = null;
+        private IContentDatabase? _database = null;
 
-        private readonly IReadOnlyMasterDatabase? _masterDatabase;
+        private readonly IMasterDatabase? _masterDatabase;
 
-        public DatabaseReference(in ContentKey contentId, in ContentKey? databaseId = null, IReadOnlyMasterDatabase? masterDatabase = null) 
+        public DatabaseReference(in ContentKey contentId, in ContentKey? databaseId = null, IMasterDatabase? masterDatabase = null) 
             : this(BoundContentKey<TContent>.Make(contentId, databaseId), masterDatabase) { }
             
         
@@ -31,7 +31,7 @@ namespace JustLoaded.Content
         /// <param name="databaseKey">When null a default database for <typeparamref name="TContent"/> will be used</param>
         /// <param name="key"></param>
         /// <param name="masterDatabase"></param>
-        public DatabaseReference(in BoundContentKey<TContent> key, IReadOnlyMasterDatabase? masterDatabase = null) {
+        public DatabaseReference(in BoundContentKey<TContent> key, IMasterDatabase? masterDatabase = null) {
             this.Key = key;
             this._masterDatabase = masterDatabase;
         }
