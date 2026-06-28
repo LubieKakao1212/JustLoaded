@@ -12,19 +12,35 @@ namespace JustLoaded.Content.Database
         
         bool IsLocked { get; }
 
+        void Lock();
+        
         /// <summary>
         /// </summary>
         /// <exception cref="UnsupportedContentTypeException">When this <see cref="IContentDatabase"/> does not support given <typeparamref name="TContent"/> content Type</exception>
-        /// <returns>True if element was successfully added, False if given key already exists</returns>
         /// <exception cref="DatabaseLockedException">When this database is locked (<see cref="IsLocked"/>)</exception>
-        bool AddContent<TContent>(ContentKey key, TContent value) where TContent : notnull;
-
+        /// <returns>True if element was successfully added, False if given key already exists</returns>
+        void AddContent<TContent>(ContentKey key, TContent value) where TContent : notnull;
+        
         /// <summary>
         /// Overload of <see cref="AddContent{TContent}"/> for use with reflection. <br/>
         /// If you are not using reflection and know the type at compile time, use <see cref="AddContent{TContent}"/>
         /// </summary>
         /// <inheritdoc cref="AddContent{TContent}"/>
-        bool AddContent(ContentKey key, object value, Type type);
+        void AddContent(ContentKey key, Type type, object value);
+
+        /// <summary>
+        /// </summary>
+        /// <exception cref="UnsupportedContentTypeException">When this <see cref="IContentDatabase"/> does not support given <typeparamref name="TContent"/> content Type</exception>
+        /// <exception cref="DatabaseLockedException">When this database is locked (<see cref="IsLocked"/>)</exception>
+        /// <returns>True if element was successfully added, False if any error was encountered during method execution</returns>
+        bool TryAddContent<TContent>(ContentKey key, TContent value) where TContent : notnull;
+        
+        /// <summary>
+        /// Overload of <see cref="TryAddContent{TContent}"/> for use with reflection. <br/>
+        /// If you are not using reflection and know the type at compile time, use <see cref="TryAddContent{TContent}"/>
+        /// </summary>
+        /// <inheritdoc cref="TryAddContent{TContent}"/>
+        bool TryAddContent(ContentKey key, Type type, object value);
         
         void RegisterContentAddedCallback<TContent>(ContentAddedCallback<TContent> callback) where TContent : notnull;
     }
@@ -63,7 +79,9 @@ namespace JustLoaded.Content.Database
 
         TContent? GetContent(ContentKey key);
         
-        bool AddContent(ContentKey key, TContent value);
+        void AddContent(ContentKey key, TContent value);
+        
+        bool TryAddContent(ContentKey key, TContent value);
 
         [return: MaybeNull]
         TContent1 IReadOnlyContentDatabase.GetContent<TContent1>(ContentKey key)
@@ -78,13 +96,13 @@ namespace JustLoaded.Content.Database
             return default;
         }
         
-        bool IContentDatabase.AddContent<TContent1>(ContentKey key, TContent1 value)
+        void IContentDatabase.AddContent<TContent1>(ContentKey key, TContent1 value)
         {
             AssertType<TContent1>();
 
             if (value is TContent valueT)
             {
-                return AddContent(key, valueT);
+                AddContent(key, valueT);
             }
             throw new UnsupportedContentTypeException(typeof(TContent1), new[] { typeof(TContent) });
         }
