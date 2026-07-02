@@ -39,6 +39,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JustLoaded.Logger.Tests", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JustLoaded.Util.Tests", "Tests\JustLoaded.Util.Tests\JustLoaded.Util.Tests.csproj", "{2076F1F2-DCE3-4302-8076-536CDDE3D70C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JustLoaded.Serialization", "JustLoaded.Serialization\JustLoaded.Serialization.csproj", "{1BDA471C-D4F0-4188-81A4-326C8F39C2D2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JustLoaded.Serialization.Tests", "Tests\JustLoaded.Serialization.Tests\JustLoaded.Serialization.Tests.csproj", "{963E9ACC-86B2-4C57-91FD-647109DA79E7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -101,6 +105,14 @@ Global
 		{2076F1F2-DCE3-4302-8076-536CDDE3D70C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2076F1F2-DCE3-4302-8076-536CDDE3D70C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2076F1F2-DCE3-4302-8076-536CDDE3D70C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1BDA471C-D4F0-4188-81A4-326C8F39C2D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BDA471C-D4F0-4188-81A4-326C8F39C2D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BDA471C-D4F0-4188-81A4-326C8F39C2D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BDA471C-D4F0-4188-81A4-326C8F39C2D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{963E9ACC-86B2-4C57-91FD-647109DA79E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{963E9ACC-86B2-4C57-91FD-647109DA79E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{963E9ACC-86B2-4C57-91FD-647109DA79E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{963E9ACC-86B2-4C57-91FD-647109DA79E7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
