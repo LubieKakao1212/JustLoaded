@@ -15,24 +15,6 @@ namespace JustLoaded.Content.Database
         public virtual IEnumerable<KeyValuePair<ContentKey, TContent>> ContentEntries => content;
         public virtual IEnumerable<ContentKey> ContentKeys => content.Keys;
         
-        public virtual bool AddContent(ContentKey key, TContent value)
-        {
-            if (IsLocked) {
-                throw new DatabaseLockedException();
-            }
-            ContentAdded(key, ref value);
-            return content.TryAdd(key, value);
-        }
-
-        public bool AddContent(ContentKey key, object value, Type type) {
-            if (type == typeof(TContent) && value is TContent value1) {
-                return AddContent(key, value1);
-            }
-            else {
-                throw new UnsupportedContentTypeException(value.GetType(), new[] { typeof(TContent) });
-            }
-        }
-        
         public virtual TContent? GetContent(ContentKey key) {
             return content.GetValueOrDefault(key);
         }
@@ -40,6 +22,59 @@ namespace JustLoaded.Content.Database
         public virtual void Lock() {
             IsLocked = true;
             Locked();
-        } 
+        }
+
+        public virtual void AddContent(ContentKey key, TContent value) {
+            AddContent(key, typeof(TContent), value);
+        }
+
+        public virtual void AddContent(ContentKey key, Type type, object value) {
+            if (IsLocked) {
+                throw new DatabaseLockedException();
+            }
+
+            if (value is not TContent value1) {
+                throw new UnsupportedContentTypeException(value.GetType(), new[] { typeof(TContent) });;
+            }
+
+            if (!content.TryAdd(key, value1)) {
+                throw new ArgumentException($"Content with key {key} already exists");
+            }
+            
+            ContentAdded(key, ref value1);
+        }
+ 
+        public bool TryAddContent(ContentKey key, TContent value) {
+            return TryAddContent<TContent>(key, value);
+        }
+
+        public virtual bool TryAddContent<TContent1>(ContentKey key, TContent1 value) where TContent1 : notnull {
+            if (IsLocked) {
+                return false;
+            }
+
+            if (value is not TContent value1) {
+                return false;
+            }
+
+            if (!content.TryAdd(key, value1)) {
+                return false;
+            }
+            
+            ContentAdded(key, ref value1);
+            return true;
+        }
+
+        public virtual bool TryAddContent(ContentKey key, Type type, object value) {
+            if (IsLocked) {
+                return false;
+            }
+
+            if (typeof(TContent).IsAssignableFrom(type) && value is TContent value1) {
+                return TryAddContent<TContent>(key, value1);
+            }
+
+            return false;
+        }
     }
 }

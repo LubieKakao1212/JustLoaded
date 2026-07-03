@@ -2,7 +2,7 @@ using JustLoaded.Util;
 
 namespace JustLoaded.Content.Database;
 
-public interface IReadOnlyMasterDatabase : IReadOnlyContentDatabase {
+public interface IMasterDatabase : IContentDatabase<IContentDatabase>, IDatabaseRegistrationContext {
     public ContentKey? KeyByContentType<TContent>()
     {
         return KeyByContentType(typeof(TContent));

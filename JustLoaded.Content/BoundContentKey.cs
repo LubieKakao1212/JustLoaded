@@ -20,11 +20,11 @@ public struct BoundContentKey<TContent> : IEquatable<BoundContentKey<TContent>> 
         _hash = null;
     }
 
-    public TContent? FetchContent(IReadOnlyMasterDatabase? masterDb = null, IReadOnlyContentDatabase? cachedDb = null) {
+    public TContent? FetchContent(IMasterDatabase? masterDb = null, IContentDatabase? cachedDb = null) {
         return FetchContent(ref cachedDb, masterDb);
     }
 
-    public TContent? FetchContent(ref IReadOnlyContentDatabase? cachedDb, IReadOnlyMasterDatabase? masterDb = null) {
+    public TContent? FetchContent(ref IContentDatabase? cachedDb, IMasterDatabase? masterDb = null) {
         if (cachedDb != null) {
             if (!cachedDb.IsTypeSupported(typeof(TContent))) {
                 //TODO exception

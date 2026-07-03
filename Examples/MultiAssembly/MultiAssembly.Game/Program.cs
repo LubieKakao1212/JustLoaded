@@ -19,7 +19,7 @@ var ml = new ModLoaderSystem.Builder(
         )
     ).Build()
     .AddAttachment<ILogger>(loggerBase)
-    .AddAttachment<IReadOnlyMasterDatabase>(new MasterDatabase());
+    .AddAttachment<IMasterDatabase>(new MasterDatabase());
 
 try {
     ml.DiscoverMods();
@@ -35,7 +35,7 @@ var log = ml.GetRequiredAttachment<ILogger>();
 
 log.Info(""+ml.CurrentInitPhase);
 
-var items = (IContentDatabase<Item>?)ml.GetRequiredAttachment<IReadOnlyMasterDatabase>().GetByContentType<Item>();
+var items = (IContentDatabase<Item>?)ml.GetRequiredAttachment<IMasterDatabase>().GetByContentType<Item>();
 
 
 foreach (var key in items!.ContentKeys) {
