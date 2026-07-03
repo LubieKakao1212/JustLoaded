@@ -1,53 +1,68 @@
 using System.Diagnostics.CodeAnalysis;
 using JustLoaded.Filesystem;
+using PathLib;
 
 namespace JustLoaded.FileSystem.Tests.Relative.Simple;
 
 //TODO Write RelativeFilesystem test cases for both simple and combined
-public class SimpleRelativeFilesystemTests : RelativeFilesystemTester<Source> {
+public class SimpleRelativeFilesystemTests : RelativeFilesystemTester<Source>
+{
 
     [NotNull]
     private VirtualFilesystem? Vfs { get; set; }
 
-    protected override RelativeFilesystem SetupFilesystem() {
+    protected override RelativeFilesystem SetupFilesystem()
+    {
         Vfs = new VirtualFilesystem();
 
         return new RelativeFilesystem(Vfs, "prefix".AsPath());
     }
 
-    protected override void MakeFile(ModAssetPath fileName, string content) {
-        Vfs.AddFile(fileName.path, content);
+    protected override void MakeFile(IPurePath fileName, string content)
+    {
+        Vfs.AddFile(fileName, content);
     }
 }
 
-public class Source : RelativeFilesystemTestSourceBase {
+public class Source : RelativeFilesystemTestSourceBase
+{
 
-    public override IEnumerable<(ModAssetPath file, ModAssetPath query)> GetSingleFileRelativeSource {
-        get {
+    public override IEnumerable<(IPurePath file, IPurePath query)> GetSingleFileRelativeSource
+    {
+        get
+        {
             yield break;
         }
     }
 
-    public override IEnumerable<(ModAssetPath query, ModAssetPath[] files, ModAssetPath[] results)> GetListDirsSource {
-        get {
+    public override IEnumerable<(IPurePath query, IPurePath[] files, IPurePath[] results)> GetListDirsSource
+    {
+        get
+        {
             yield break;
         }
     }
 
-    public override IEnumerable<(ModAssetPath query, ModAssetPath[] files, ModAssetPath[] results)> GetListFilesShallowSource {
-        get {
+    public override IEnumerable<(IPurePath query, IPurePath[] files, IPurePath[] results)> GetListFilesShallowSource
+    {
+        get
+        {
             yield break;
         }
     }
 
-    public override IEnumerable<(ModAssetPath query, ModAssetPath[] files, ModAssetPath[] results)> GetListFilesRecursiveSource {
-        get {
+    public override IEnumerable<(IPurePath query, IPurePath[] files, IPurePath[] results)> GetListFilesRecursiveSource
+    {
+        get
+        {
             yield break;
         }
     }
 
-    public override IEnumerable<(string pattern, ModAssetPath[] files, ModAssetPath[] results)> GetListFilesPatternSource {
-        get {
+    public override IEnumerable<(string pattern, IPurePath[] files, IPurePath[] results)> GetListFilesPatternSource
+    {
+        get
+        {
             yield break;
         }
     }

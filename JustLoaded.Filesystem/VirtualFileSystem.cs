@@ -39,7 +39,7 @@ public class VirtualFilesystem(params char[] illegalCharacters) : IFilesystem
         return CallForPath(purePath, false,
             (system, file) =>
             {
-                if (file != stringPath)
+                if (file != string.Empty)
                 {
                     if (!system._directories.TryGetValue(file, out var s))
                     {
