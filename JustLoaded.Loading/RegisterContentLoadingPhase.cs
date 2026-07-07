@@ -14,7 +14,7 @@ namespace JustLoaded.Loading;
 public class RegisterContentLoadingPhase : ILoadingPhase {
     
     public void Load(ModLoaderSystem modLoader) {
-        var masterDb = modLoader.GetRequiredAttachment<IReadOnlyMasterDatabase>();
+        var masterDb = modLoader.GetRequiredAttachment<IMasterDatabase>();
         var mods = modLoader.Mods;
 
         var logger = modLoader.GetAttachment<ILogger>();
@@ -60,9 +60,9 @@ public class RegisterContentLoadingPhase : ILoadingPhase {
                             continue;
                         }
                             
-                        var result = db.AddContent(key, value, contentType);
+                        var result = db.TryAddContent(key, contentType, value);
                         if (!result) {
-                            logger?.Error($"Could not register value from field, key { key } is already in use");
+                            logger?.Error($"Could not register value for key { key }");
                             continue;
                         }
                     }
