@@ -20,24 +20,19 @@ public class RelativeFilesystem : IFilesystem
 
     public Stream? OpenFile(IPurePath path)
     {
-        return _nestedFilesystem.OpenFile(TransformKey(path));
+        return _nestedFilesystem.OpenFile(TransformPath(path));
     }
 
     public IEnumerable<IPurePath> ListFiles(IPurePath path, string pattern = "*", bool recursive = false)
     {
-        return _nestedFilesystem.ListFiles(TransformKey(path), pattern, recursive)
+        return _nestedFilesystem.ListFiles(TransformPath(path), pattern, recursive)
             .Select(purePath => purePath.RelativeTo(_prefixPath));
     }
 
     public IEnumerable<IPurePath> ListPaths(IPurePath path)
     {
-        return _nestedFilesystem.ListPaths(TransformKey(path))
+        return _nestedFilesystem.ListPaths(TransformPath(path))
             .Select(purePath => purePath.RelativeTo(_prefixPath));
-    }
-
-    private IPurePath TransformKey(in IPurePath key)
-    {
-        return TransformPath(key);
     }
 
     private IPurePath TransformPath(IPurePath path)
