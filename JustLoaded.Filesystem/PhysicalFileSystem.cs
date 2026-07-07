@@ -17,8 +17,6 @@ public class PhysicalFilesystem : IFilesystem
     }
     private IPath Root { get; }
 
-    public bool HandlesSource => false;
-
     public Stream? OpenFile(IPurePath path)
     {
         var concretePath = ApplyPath(path);

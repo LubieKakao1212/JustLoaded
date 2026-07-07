@@ -12,21 +12,7 @@ public class UnifiedFileSystem : IFilesystem
     /// </summary>
     /// <param name="filesystems">First has more priority than last</param>
     /// <exception cref="ApplicationException"></exception>
-    public UnifiedFileSystem(IEnumerable<IFilesystem> filesystems)
-    {
-        _filesystems = new List<IFilesystem>(filesystems);
-
-        HandlesSource = _filesystems.Aggregate((bool?)null, (v, fs) =>
-        {
-            if (v.HasValue && !fs.HandlesSource)
-            {
-                throw new ApplicationException($"Cannot mix source-handling and non-source-handling filesystems under {nameof(UnifiedFileSystem)}");
-            }
-            return fs.HandlesSource;
-        })!.Value;
-    }
-
-    public bool HandlesSource { get; }
+    public UnifiedFileSystem(IEnumerable<IFilesystem> filesystems) => _filesystems = [..filesystems];
 
     public Stream? OpenFile(IPurePath path)
     {

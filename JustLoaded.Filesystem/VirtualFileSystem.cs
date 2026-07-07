@@ -22,8 +22,6 @@ public class VirtualFilesystem(params char[] illegalCharacters) : IFilesystem
     {
 
     }
-    public bool HandlesSource => false;
-
 
     public Stream OpenFile(IPurePath filePath)
     {

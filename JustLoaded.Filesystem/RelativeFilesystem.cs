@@ -16,8 +16,6 @@ public class RelativeFilesystem : IFilesystem
         prefixPath.Matches(path => !path.IsAbsolute());
     }
 
-    public bool HandlesSource => _nestedFilesystem.HandlesSource;
-
     public Stream? OpenFile(IPurePath path)
     {
         return _nestedFilesystem.OpenFile(TransformPath(path));
