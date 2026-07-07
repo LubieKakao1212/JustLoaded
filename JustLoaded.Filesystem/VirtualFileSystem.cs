@@ -46,16 +46,14 @@ public class VirtualFilesystem(params char[] illegalCharacters) : IFilesystem
                     system = s;
                 }
 
-                var list = new List<IPurePath>();
+                var list = system._files.Keys.Select(f => new PurePosixPath(stringPath, f)).ToList<IPurePath>();
 
-                list.AddRange(system._files.Keys.Select(f => new PurePosixPath(stringPath, f)));
-
-                if (!recursive)
-                    return list.Where(p => p.Filename.MatchPattern(pattern));
-
-                foreach (var directory in system._directories)
+                if (recursive)
                 {
-                    list.AddRange(directory.Value.ListFiles(new PurePosixPath(string.Empty), pattern, recursive).Select(p => path.Join(directory.Key.AsPath(), p)));
+                    foreach (var directory in system._directories)
+                    {
+                        list.AddRange(directory.Value.ListFiles(new PurePosixPath(string.Empty), pattern, recursive).Select(p => path.Join(directory.Key.AsPath(), p)));
+                    }
                 }
 
                 return list.Where(p => p.Filename.MatchPattern(pattern));
