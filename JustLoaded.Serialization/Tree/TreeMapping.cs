@@ -12,6 +12,8 @@ public class TreeMapping : TreeNodeBase, ITreeMapping {
 
     private readonly List<KeyValuePair<string, ITreeNode>> _children = new();
 
+    #region Collection
+    
     public ITreeNode GetChild(int idx) {
         return _children[idx].Value;
     }
@@ -40,7 +42,11 @@ public class TreeMapping : TreeNodeBase, ITreeMapping {
         existing.SetParentInternal(null);
         return existing;
     }
-
+    
+    #endregion
+    
+    #region Mapping
+    
     public ITreeNode GetChild(string key) {
         return GetChild(IndexOfKey(key));
     }
@@ -69,6 +75,17 @@ public class TreeMapping : TreeNodeBase, ITreeMapping {
 
     public ITreeNode SwapChild(string key, ITreeNode node) {
         return SwapChild(IndexOfKey(key), node);
+    }
+
+    #endregion
+
+    public override ITreeNode DeepClone() {
+        var result = new TreeMapping();
+        for (int i = 0; i < Count; i++) {
+            var pair = _children[i];
+            result.InsertChild(pair.Key, pair.Value.DeepClone());
+        }
+        return result;
     }
 
     public override IEnumerable<ParsingEvent> ToEvents() {

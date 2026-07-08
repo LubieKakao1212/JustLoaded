@@ -9,4 +9,8 @@
       <PackageReference Include="YamlDotNet" Version="18.1.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\JustLoaded.Util\JustLoaded.Util.csproj" />
+    </ItemGroup>
+
 </Project>

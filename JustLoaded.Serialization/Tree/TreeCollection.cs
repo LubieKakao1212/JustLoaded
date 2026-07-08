@@ -12,6 +12,8 @@ public class TreeCollection(int capacity) : TreeNodeBase, ITreeCollection {
 
     private readonly List<ITreeNode> _children = new(capacity);
 
+    public TreeCollection() : this(0) { }
+    
     public ITreeNode GetChild(int idx) {
         return _children[idx];
     }
@@ -44,5 +46,13 @@ public class TreeCollection(int capacity) : TreeNodeBase, ITreeCollection {
             }
         }
         yield return new SequenceEnd();
+    }
+
+    public override ITreeNode DeepClone() {
+        var result = new TreeCollection(Count);
+        for (int i = 0; i < Count; i++) {
+            result.InsertChild(i, _children[i].DeepClone());
+        }
+        return result;
     }
 }

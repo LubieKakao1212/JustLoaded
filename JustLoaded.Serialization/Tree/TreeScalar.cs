@@ -10,4 +10,8 @@ public class TreeScalar(string value) : TreeNodeBase, ITreeScalar {
         yield return new Scalar(Value);
     }
 
+    public override ITreeNode DeepClone() {
+        return new TreeScalar(Value);
+    }
+
 }

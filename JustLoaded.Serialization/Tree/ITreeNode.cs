@@ -1,24 +1,13 @@
+using JustLoaded.Util.Attachment;
 using YamlDotNet.Core.Events;
 
 namespace JustLoaded.Serialization.Tree;
 
-public interface ITreeNode {
+public interface ITreeNode : IRecursiveAttachmentProvider, IMutableAttachmentProvider<ITreeNode> {
 
     ITreeNode? Parent { get; }
     
     bool IsRoot => Parent == null;
-
-    /// <summary>
-    /// Can be set to an arbitrary value, used as custom metadata.
-    /// </summary>
-    //TODO think about something more robust 
-    object? Companion { get; set; }
-
-    /// <summary>
-    /// Returns <see cref="Companion"/> or if it was null attempts to acquire it from <see cref="Parent"/>
-    /// </summary>
-    /// <returns></returns>
-    object? GetCompanionRecursive() => Companion ?? Parent?.GetCompanionRecursive();
 
     /// <summary>
     /// Temporary until dedicated serializer is made
@@ -31,4 +20,11 @@ public interface ITreeNode {
     /// </summary>
     /// <param name="newParent"></param>
     internal void SetParentInternal(ITreeNode? newParent);
+
+    /// <summary>
+    /// Clones this <see cref="ITreeNode"/> and all of its children <br/>
+    /// Does not clone attachments
+    /// </summary>
+    /// <returns>Cloned node as root</returns>
+    ITreeNode DeepClone();
 }
