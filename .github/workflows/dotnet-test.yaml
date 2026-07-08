@@ -3,7 +3,7 @@ run-name: Run .NET Tests
 on:
   pull_request:
     branches: [master]
-    types: [edited, opened, reopened]
+    types: [synchronize, opened, reopened]
   workflow_dispatch:
   push:
     branches: [master]
