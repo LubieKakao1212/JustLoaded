@@ -1,23 +1,15 @@
+using PathLib;
+
 namespace JustLoaded.Filesystem;
 
 /// <summary>
-/// Represents a read only file system
+///     Represents a read only file system
 /// </summary>
-public interface IFilesystem {
+public interface IFilesystem
+{
+    public Stream? OpenFile(IPurePath path);
 
-    public bool HandlesSource { get; }
+    public IEnumerable<IPurePath> ListFiles(IPurePath path, string pattern = "*", bool recursive = false);
 
-    public Stream? OpenFile(ModAssetPath path);
-
-    public IEnumerable<ModAssetPath> ListFiles(ModAssetPath path, string pattern = "*", bool recursive = false);
-
-    public IEnumerable<ModAssetPath> ListPaths(ModAssetPath path);
-    
-    public static void HandleSourceHandlingWarning(IFilesystem filesystem) {
-        if (filesystem.HandlesSource) {
-            //TODO use Logger (Warning)
-            Console.Error.WriteLine("Nesting source-handling filesystems in one another will most likely cause issues");
-        }
-    }
-    
+    public IEnumerable<IPurePath> ListPaths(IPurePath path);
 }

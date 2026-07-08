@@ -1,42 +1,40 @@
-using System.Diagnostics;
 using JustLoaded.Util.Validation;
 using PathLib;
 
 namespace JustLoaded.Filesystem;
 
-public class RelativeFilesystem : IFilesystem {
+public class RelativeFilesystem : IFilesystem
+{
 
-    public bool HandlesSource => _nestedFilesystem.HandlesSource;
-    
     private readonly IFilesystem _nestedFilesystem;
     private readonly IPurePath _prefixPath;
-    
-    public RelativeFilesystem(IFilesystem nested, IPurePath prefixPath) {
+
+    public RelativeFilesystem(IFilesystem nested, IPurePath prefixPath)
+    {
         _nestedFilesystem = nested;
         _prefixPath = prefixPath;
         prefixPath.Matches(path => !path.IsAbsolute());
     }
-    
-    public Stream? OpenFile(ModAssetPath path) {
-        return _nestedFilesystem.OpenFile(TransformKey(path));
+
+    public Stream? OpenFile(IPurePath path)
+    {
+        return _nestedFilesystem.OpenFile(TransformPath(path));
     }
 
-    public IEnumerable<ModAssetPath> ListFiles(ModAssetPath path, string pattern = "*", bool recursive = false) {
-        return _nestedFilesystem.ListFiles(TransformKey(path), pattern, recursive)
-            .Select(ModAssetPathExtensions.RelativeToSelect(_prefixPath));
+    public IEnumerable<IPurePath> ListFiles(IPurePath path, string pattern = "*", bool recursive = false)
+    {
+        return _nestedFilesystem.ListFiles(TransformPath(path), pattern, recursive)
+            .Select(purePath => purePath.RelativeTo(_prefixPath));
     }
 
-    public IEnumerable<ModAssetPath> ListPaths(ModAssetPath path) {
-        return _nestedFilesystem.ListPaths(TransformKey(path))
-            .Select(ModAssetPathExtensions.RelativeToSelect(_prefixPath));
+    public IEnumerable<IPurePath> ListPaths(IPurePath path)
+    {
+        return _nestedFilesystem.ListPaths(TransformPath(path))
+            .Select(purePath => purePath.RelativeTo(_prefixPath));
     }
 
-    private IPurePath TransformPath(IPurePath path) {
+    private IPurePath TransformPath(IPurePath path)
+    {
         return _prefixPath.Join(path);
     }
-
-    private ModAssetPath TransformKey(in ModAssetPath key) {
-        return new ModAssetPath(key.modSelector, TransformPath(key.path));
-    }
-    
 }
