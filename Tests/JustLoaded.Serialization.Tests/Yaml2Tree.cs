@@ -6,7 +6,7 @@ namespace JustLoaded.Serialization.Tests;
 
 public class Yaml2Tree {
 
-    private static IDeserializer _deserializer = new DeserializerBuilder()
+    private static readonly IDeserializer Deserializer = new DeserializerBuilder()
         .WithTreeDeserialization()
         .Build();
     
@@ -23,7 +23,7 @@ kota:
     [Fact]
     public void Test() {
         var yaml = "ala:\n  - aaa\n  - bbb\n  - ccc\nma: 2137\nkota:\n  ma: 2\n  ale: abc";
-        var node = _deserializer.Deserialize<ITreeNode>(yaml);
+        var node = Deserializer.Deserialize<ITreeNode>(yaml);
 
         var root = Assert.IsAssignableFrom<ITreeMapping>(node);
         var ala = Assert.IsAssignableFrom<ITreeCollection>(root.GetChild("ala"));
