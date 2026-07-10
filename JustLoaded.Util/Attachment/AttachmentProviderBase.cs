@@ -18,7 +18,7 @@ public class AttachmentProviderBase : IAttachmentProvider {
     }
 
     public T GetRequiredAttachment<T>() where T : class {
-        return GetAttachment<T>() ?? throw new ApplicationException($"No attachment of type {typeof(T)}");
+        return GetAttachment<T>() ?? throw new MissingAttachmentException(typeof(T));
     }
 
     public bool HasAttachment<T>() where T : class {

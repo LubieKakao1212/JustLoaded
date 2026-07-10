@@ -47,6 +47,7 @@ jobs:
           - JustLoaded.Filesystem
           - JustLoaded.Util
           - JustLoaded.Logger
+          - JustLoaded.Serialization
           - JustLoaded.Discovery.Reflect
           - JustLoaded.Loading
     env:
